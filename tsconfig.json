@@ -4,7 +4,11 @@
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "outDir": "./dist"
+    "outDir": "./dist",
+    "baseUrl": ".", // root of your "paths" below. Required if "paths" is defined
+    "paths": {
+      "@/*": ["src/*"] // enables us to use @components/MyComponent
+    }
   },
   "exclude": ["__fixtures__", "__tests__", "coverage", "dist", "node_modules"],
   "include": ["src"]

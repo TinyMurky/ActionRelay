@@ -36,5 +36,8 @@ export default {
       }
     ]
   },
-  verbose: true
+  verbose: true,
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1'
+  }
 }

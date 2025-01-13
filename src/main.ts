@@ -4,7 +4,7 @@ import { wait } from './wait.js'
 /**
  * The main function for the action.
  *
- * @returns Resolves when the action is complete.
+ * The main function for the action.
  */
 export async function run(): Promise<void> {
   try {
