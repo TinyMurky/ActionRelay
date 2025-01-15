@@ -1,6 +1,6 @@
-name: The name of your action here
+name: ActionRelay
 description: Provide a description here
-author: Your name or organization here
+author: Tiny_Murky
 
 # Add your action's branding here. This will appear on the GitHub Marketplace.
 branding:
@@ -15,8 +15,7 @@ inputs:
     default: '1000'
   GITHUB_TOKEN:
     description: 'GitHub API Access Token'
-    default: ${{ GITHUB_TOKEN }}
-    required: false
+    required: true
 
 outputs:
   time:

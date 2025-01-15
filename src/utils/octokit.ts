@@ -1,7 +1,6 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 import { GitHubInstance } from '@/types/github.js'
-import envConfigInstance, { EnvConfig } from '@/utils/envConfig.js'
 import Logger from '@/utils/logger.js'
 
 /**
@@ -19,12 +18,8 @@ export default class OctokitManager {
    * Info: (20250114 - Murky)
    * @param envConfig - The EnvConfig class, default is envConfigInstance
    */
-  public static getInstance(
-    envConfig: Readonly<EnvConfig> = envConfigInstance
-  ): GitHubInstance {
+  public static getInstance(githubToken: Readonly<string>): GitHubInstance {
     if (!this.#octokitInstance) {
-      const githubToken = envConfig.GITHUB_TOKEN
-
       if (!githubToken) {
         const errorMessage = 'GITHUB_TOKEN is empty string'
         Logger.error(errorMessage)

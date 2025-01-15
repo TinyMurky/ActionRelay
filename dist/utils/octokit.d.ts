@@ -1,5 +1,4 @@
 import { GitHubInstance } from '@/types/github.js';
-import { EnvConfig } from '@/utils/envConfig.js';
 /**
  * Info: (20250113 - Murky)
  *
@@ -14,5 +13,5 @@ export default class OctokitManager {
      * Info: (20250114 - Murky)
      * @param envConfig - The EnvConfig class, default is envConfigInstance
      */
-    static getInstance(envConfig?: Readonly<EnvConfig>): GitHubInstance;
+    static getInstance(githubToken: Readonly<string>): GitHubInstance;
 }

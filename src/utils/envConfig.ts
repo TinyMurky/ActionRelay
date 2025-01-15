@@ -1,6 +1,11 @@
 import * as core from '@actions/core'
 import Logger from '@/utils/logger.js'
 
+/**
+ * Info: (20250115 - Murky)
+ * This can read env and change into class
+ * might be delete later
+ */
 export class EnvConfig {
   readonly GITHUB_TOKEN
 

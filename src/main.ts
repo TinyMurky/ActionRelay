@@ -15,8 +15,10 @@ export async function run(): Promise<void> {
     core.debug(`Github Context: ${githubContext}`)
 
     // Log the current timestamp, wait, then log the new timestamp
-    // core.debug(new Date().toTimeString())
-    const octokit = OctokitManager.getInstance()
+    core.debug(new Date().toTimeString())
+
+    const githubToken = core.getInput('GITHUB_TOKEN')
+    const octokit = OctokitManager.getInstance(githubToken)
 
     const listWorkflowJobs = new ListWorkflowJobs({
       octokit,
