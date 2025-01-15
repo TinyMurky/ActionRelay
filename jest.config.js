@@ -37,7 +37,9 @@ export default {
     ]
   },
   verbose: true,
+  roots: ['<rootDir>'],
+  modulePaths: ['<rootDir>'],
   moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1'
+    '^@/(.*)\\.js': '<rootDir>/src/$1.ts'
   }
 }

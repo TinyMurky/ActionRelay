@@ -1,7 +1,8 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
-import { GITHUB_TOKEN } from '@/constants/env.js'
 import { GitHubInstance } from '@/types/github.js'
+import envConfigInstance, { EnvConfig } from '@/utils/envConfig.js'
+import Logger from '@/utils/logger.js'
 
 /**
  * Info: (20250113 - Murky)
@@ -14,17 +15,26 @@ import { GitHubInstance } from '@/types/github.js'
 export default class OctokitManager {
   static #octokitInstance: GitHubInstance | null = null
 
-  public static getInstance(): GitHubInstance {
+  /**
+   * Info: (20250114 - Murky)
+   * @param envConfig - The EnvConfig class, default is envConfigInstance
+   */
+  public static getInstance(
+    envConfig: Readonly<EnvConfig> = envConfigInstance
+  ): GitHubInstance {
     if (!this.#octokitInstance) {
-      if (!GITHUB_TOKEN) {
-        const errorMessage = 'GITHUB_TOKEN is not import correctly'
-        core.error(errorMessage)
-        core.setFailed('GITHUB_TOKEN is not import correctly')
+      const githubToken = envConfig.GITHUB_TOKEN
+
+      if (!githubToken) {
+        const errorMessage = 'GITHUB_TOKEN is empty string'
+        Logger.error(errorMessage)
+        core.setFailed(errorMessage)
+        throw new Error(githubToken)
       }
 
       // Info: (20250113 - Murky) We can guaranty GITHUB_TOKEN exist
       // since we setFailed is not exist
-      this.#octokitInstance = github.getOctokit(GITHUB_TOKEN!)
+      this.#octokitInstance = github.getOctokit(githubToken)
     }
 
     return this.#octokitInstance

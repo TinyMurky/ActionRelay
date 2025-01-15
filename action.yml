@@ -14,7 +14,7 @@ inputs:
     required: true
     default: '1000'
   GITHUB_TOKEN:
-    description: "GitHub API Access Token"
+    description: 'GitHub API Access Token'
     default: ${{ GITHUB_TOKEN }}
     required: false
 

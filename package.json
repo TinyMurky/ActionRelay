@@ -1,5 +1,5 @@
 {
-  "name": "ActionRelay",
+  "name": "action_relay",
   "description": "Transfer GitHub Actions To Flutter App",
   "version": "0.0.0",
   "author": "",
