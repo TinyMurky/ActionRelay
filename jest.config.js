@@ -41,5 +41,6 @@ export default {
   modulePaths: ['<rootDir>'],
   moduleNameMapper: {
     '^@/(.*)\\.js': '<rootDir>/src/$1.ts'
-  }
+  },
+  setupFiles: ['dotenv/config']
 }
