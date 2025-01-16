@@ -7,7 +7,7 @@
  */
 import { jest } from '@jest/globals'
 import * as core from '../__fixtures__/core.js'
-import * as ListWorkflowJobs from '../__fixtures__/apis/repos/listWorkflowJobs.js'
+import * as ListWorkflowJobs from '../__fixtures__/steps/jobSummary/listWorkflowJobs.js'
 
 // Below is how to mock an class directly in factory
 // jest.unstable_mockModule('../src/apis/repos/listWorkflowJobs', () => {
@@ -18,7 +18,7 @@ import * as ListWorkflowJobs from '../__fixtures__/apis/repos/listWorkflowJobs.j
 //   }
 // })
 jest.unstable_mockModule(
-  '../src/apis/repos/listWorkflowJobs',
+  '../src/steps/jobSummary/listWorkflowJobs',
   () => ListWorkflowJobs
 )
 // Mocks should be declared before the module being tested is imported.

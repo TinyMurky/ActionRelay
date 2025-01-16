@@ -4,7 +4,7 @@ import {
 } from '@/types/job.js'
 
 export class WorkflowJobStep {
-  static readonly MIN_STEP_NUMBER = 1
+  static readonly MIN_STEP_NUMBER = 0
 
   /**
    * The name of the job.

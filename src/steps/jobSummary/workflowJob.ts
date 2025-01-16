@@ -1,4 +1,4 @@
-import { WorkflowJobStep } from '@/apis/repos/workflowJobStep.js'
+import { WorkflowJobStep } from '@/steps/jobSummary/workflowJobStep.js'
 import {
   WorkflowJobConclusion,
   WorkflowJobStatus,
@@ -149,6 +149,7 @@ export class WorkflowJob {
     this.name = job.name
 
     // Initialize steps as WorkflowJobStep instances
+    console.log(job?.steps)
     this.steps = job?.steps
       ? job?.steps.map((step) => new WorkflowJobStep(step))
       : []

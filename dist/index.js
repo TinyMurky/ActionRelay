@@ -31329,7 +31329,7 @@ var WorkflowJobConclusion;
 })(WorkflowJobConclusion || (WorkflowJobConclusion = {}));
 
 class WorkflowJobStep {
-    static MIN_STEP_NUMBER = 1;
+    static MIN_STEP_NUMBER = 0;
     /**
      * The name of the job.
      */
@@ -31540,6 +31540,7 @@ class WorkflowJob {
         this.completedAt = this.#initDateFromISO8601(job.completed_at);
         this.name = job.name;
         // Initialize steps as WorkflowJobStep instances
+        console.log(job?.steps);
         this.steps = job?.steps
             ? job?.steps.map((step) => new WorkflowJobStep(step))
             : [];
@@ -31671,9 +31672,9 @@ async function run() {
     try {
         // const ms: string = core.getInput('milliseconds')
         // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-        coreExports.debug(`Github Context: ${githubContext}`);
+        Logger.debug(`Github Context: ${githubContext}`);
         // Log the current timestamp, wait, then log the new timestamp
-        coreExports.debug(new Date().toTimeString());
+        Logger.debug(new Date().toTimeString());
         const githubToken = coreExports.getInput('GITHUB_TOKEN');
         const octokit = OctokitManager.getInstance(githubToken);
         const listWorkflowJobs = new ListWorkflowJobs({
@@ -31681,8 +31682,8 @@ async function run() {
             githubContext
         });
         const workflowJobs = await listWorkflowJobs.fetchFromGithub();
-        coreExports.debug(`workflowJobs ${JSON.stringify(workflowJobs)}`);
-        coreExports.debug(new Date().toTimeString());
+        Logger.debug(`workflowJobs ${JSON.stringify(workflowJobs)}`);
+        Logger.debug(new Date().toTimeString());
         // Set outputs for other workflow steps to use
         coreExports.setOutput('time', new Date().toTimeString());
     }

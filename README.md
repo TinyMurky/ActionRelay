@@ -16,8 +16,18 @@ This Action can send Info to flutter App
 >   literally `${{ secrets.GITHUB_TOKEN }}`
 
 ```yaml
-- name: Run ActionRelay
-  uses: TinyMurky/ActionRelay
-  env:
-    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+jobs:
+  your-job-name:
+    name: Your  name job
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ActionRelay
+        id: action-relay
+        uses: Tiny_Murky/ActionRelay
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: other step
+        id: other-step
+        uses: xxxxx
 ```
