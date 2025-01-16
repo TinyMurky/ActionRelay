@@ -1,9 +1,11 @@
 import { WorkflowJobStep } from '@/steps/jobSummary/workflowJobStep.js'
-import {
-  WorkflowJobConclusion,
-  WorkflowJobStatus,
-  WorkflowJobType
-} from '@/types/job.js'
+import { WorkflowJobType } from '@/types/job.js'
+import { CompleteTime } from '@/utils/times/completeTime.js'
+import { CreateTime } from '@/utils/times/createTime.js'
+import { StartTime } from '@/utils/times/startTime.js'
+import { JobStatus } from '@/steps/jobSummary/jobStatus.js'
+import { JobConclusion } from '@/steps/jobSummary/jobConclusion.js'
+import { JobRun } from '@/steps/jobSummary/jobRun.js'
 
 export class WorkflowJob {
   /**
@@ -12,19 +14,10 @@ export class WorkflowJob {
   readonly id: number
 
   /**
-   * The id of the associated workflow run.
+   * Info: (20250116 - Murky)
+   * workflow run related data
    */
-  readonly runId: number
-
-  /**
-   * URL of the associated workflow run.
-   */
-  readonly runUrl: string
-
-  /**
-   * Attempt number of the associated workflow run.
-   */
-  readonly runAttempt: number
+  readonly run: JobRun
 
   /**
    * The id of the node.
@@ -49,27 +42,27 @@ export class WorkflowJob {
   /**
    * The phase of the lifecycle that the job is currently in.
    */
-  readonly status: WorkflowJobStatus
+  readonly status: JobStatus
 
   /**
    * The outcome of the job.
    */
-  readonly conclusion: WorkflowJobConclusion
+  readonly conclusion: JobConclusion
 
   /**
    * Time when the job was created.
    */
-  readonly createdAt: Date
+  readonly createdAt: CreateTime
 
   /**
    * Time when the job started.
    */
-  readonly startedAt: Date | null
+  readonly startedAt: StartTime | null
 
   /**
    * Time when the job completed.
    */
-  readonly completedAt: Date | null
+  readonly completedAt: CompleteTime | null
 
   /**
    * Name of the job.
@@ -123,29 +116,29 @@ export class WorkflowJob {
 
   constructor(job: Readonly<WorkflowJobType>) {
     this.id = job.id
-    this.runId = job.run_id
-    this.runUrl = job.run_url
-    this.runAttempt = job.run_attempt || 0
+    this.run = new JobRun({
+      id: job.run_id,
+      url: job.run_url,
+      attempt: job.run_attempt
+    })
     this.nodeId = job.node_id
     this.headSha = job.head_sha
     this.url = job.url
     this.htmlUrl = job.html_url ?? ''
 
-    this.#assertIsWorkflowJobStatus(job.status)
-    this.status = job.status
-    this.conclusion = this.#initConclusion(job.conclusion)
-    const createdAt = this.#initDateFromISO8601(job.created_at)
+    this.status = new JobStatus(job.status)
+    this.conclusion = new JobConclusion(job.conclusion)
 
-    if (!createdAt) {
-      throw new Error(
-        '[WorkflowJob init error]: createdAt must have date value'
-      )
-    }
+    this.createdAt = CreateTime.fromISOString(job.created_at)
 
-    this.createdAt = createdAt
+    this.startedAt = job.started_at
+      ? StartTime.fromISOString(job.started_at)
+      : null
 
-    this.startedAt = this.#initDateFromISO8601(job.started_at)
-    this.completedAt = this.#initDateFromISO8601(job.completed_at)
+    this.completedAt = job.completed_at
+      ? CompleteTime.fromISOString(job.completed_at)
+      : null
+
     this.name = job.name
 
     // Initialize steps as WorkflowJobStep instances
@@ -162,68 +155,6 @@ export class WorkflowJob {
     this.runnerGroupName = job.runner_group_name || ''
     this.workflowName = job.workflow_name || ''
     this.headBranch = job.head_branch || ''
-  }
-
-  #isValidDate(date: Readonly<Date>) {
-    return date instanceof Date && !isNaN(date.getTime())
-  }
-
-  #initDateFromISO8601(date: Readonly<string | null | undefined>): Date | null {
-    if (!date) {
-      return null
-    }
-
-    const initializedDate = new Date(date)
-
-    if (!this.#isValidDate(initializedDate)) {
-      throw new Error('[WorkflowJob init error]: Invalid date format')
-    }
-
-    return initializedDate
-  }
-
-  /**
-   * Convert unknown to WorkflowJobStatus
-   * Throw Error if not in enum
-   */
-  #assertIsWorkflowJobStatus(
-    status: Readonly<unknown>
-  ): asserts status is WorkflowJobStatus {
-    if (
-      !Object.values(WorkflowJobStatus).includes(status as WorkflowJobStatus)
-    ) {
-      throw new Error(
-        '[WorkflowJobStep init error]: Status is not  WorkflowJobStepStatus'
-      )
-    }
-  }
-
-  /**
-   * Info: (20250114 - Murky)
-   * Type guard of isWorkflowJobConclusion
-   */
-  #isWorkflowJobStepConclusion(
-    conclusion: Readonly<unknown>
-  ): conclusion is WorkflowJobConclusion {
-    const isConclusion = Object.values(WorkflowJobConclusion).includes(
-      conclusion as WorkflowJobConclusion
-    )
-
-    return isConclusion
-  }
-
-  #initConclusion(conclusion: Readonly<string | null>): WorkflowJobConclusion {
-    if (!conclusion) {
-      return WorkflowJobConclusion.unknown
-    }
-
-    if (!this.#isWorkflowJobStepConclusion(conclusion)) {
-      throw new Error(
-        `[WorkflowJobStep init error]: Conclusion must within ${Object.values(WorkflowJobConclusion).join(' | ')}`
-      )
-    }
-
-    return conclusion
   }
 
   /**

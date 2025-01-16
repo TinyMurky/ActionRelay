@@ -31290,6 +31290,110 @@ class OctokitManager {
     }
 }
 
+class DateTime {
+    date;
+    constructor(date) {
+        if (date instanceof Date) {
+            this.#assertValidDate(date);
+            this.date = new Date(date); // copy an new date
+        }
+        else if (typeof date === 'string') {
+            this.#assertValidISOString(date); // can only allow using ISO string
+            this.date = new Date(date);
+        }
+        else {
+            throw new Error(`DateTime must be initialized by a string or Date`);
+        }
+    }
+    static fromDate(date) {
+        return new DateTime(date);
+    }
+    static fromISOString(date) {
+        return new DateTime(date);
+    }
+    /**
+     * Info: (20250116 - Murky)
+     * Get timestamp in millisecond
+     */
+    get timestamp() {
+        return this.date.getTime();
+    }
+    /**
+     * Info: (20250116 - Murky)
+     * Javascript date can input random string and still create Date,
+     * but that date is invalid date,
+     * it can be check by getTime is number
+     */
+    #isValidDate(date) {
+        const isDateValid = !isNaN(date.getTime());
+        return isDateValid;
+    }
+    /**
+     * Validates that the given Date instance is valid.
+     */
+    #assertValidDate(date) {
+        if (!this.#isValidDate(date)) {
+            throw new Error(`Invalid Date instance provided: ${date}`);
+        }
+    }
+    /**
+     * Validates that the given string is a valid ISO date string.
+     */
+    #assertValidISOString(isoDateString) {
+        const parsedDate = new Date(isoDateString);
+        if (!this.#isValidDate(parsedDate)) {
+            throw new Error(`Invalid ISO date string provided: ${isoDateString}`);
+        }
+        const normalizedIsoData = this.#normalizeISOString(isoDateString);
+        const normalizedParsedData = this.#normalizeISOString(parsedDate.toISOString());
+        if (normalizedIsoData !== normalizedParsedData) {
+            throw new Error(`Invalid ISO date string provided: ${isoDateString}`);
+        }
+    }
+    /**
+     * Normalize an ISO date string by removing the millisecond part if present.
+     * Since the ISO string provide by github is like 2025-01-15T11:04:32Z
+     */
+    #normalizeISOString(isoDateString) {
+        return isoDateString.replace(/\.000Z$/, 'Z');
+    }
+}
+
+class CompleteTime extends DateTime {
+    constructor(date) {
+        super(date);
+    }
+    static fromDate(date) {
+        return new CompleteTime(date);
+    }
+    static fromISOString(date) {
+        return new CompleteTime(date);
+    }
+    /**
+     * Info: (20250116 - Murky)
+     * Calculate millisecond from start to complete
+     */
+    timeElapsedSinceStart(startTime) {
+        const millisecondParsedFromStart = this.timestamp - startTime.timestamp;
+        if (millisecondParsedFromStart < 0) {
+            throw new Error('CompleteTime should be later than StartTime');
+        }
+        return millisecondParsedFromStart;
+    }
+}
+
+class StartTime extends DateTime {
+    constructor(date) {
+        super(date);
+    }
+    static fromDate(date) {
+        return new StartTime(date);
+    }
+    static fromISOString(date) {
+        return new StartTime(date);
+    }
+}
+
 /**
  * The phase of the lifecycle that the job is currently in.
  */
@@ -31328,8 +31432,49 @@ var WorkflowJobConclusion;
     WorkflowJobConclusion[WorkflowJobConclusion["unknown"] = 7] = "unknown";
 })(WorkflowJobConclusion || (WorkflowJobConclusion = {}));
 
+class StepStatus {
+    status;
+    constructor(status) {
+        this.#assertIsWorkflowJobStepStatus(status);
+        this.status = status;
+    }
+    /**
+     * Convert unknown to WorkflowJobStepStatus
+     * Throw Error if not in enum
+     */
+    #assertIsWorkflowJobStepStatus(status) {
+        if (!Object.values(WorkflowJobStepStatus).includes(status)) {
+            throw new Error(`Status is not WorkflowJobStepStatus, input status: ${status}`);
+        }
+    }
+}
+
+class StepConclusion {
+    conclusion;
+    constructor(conclusion) {
+        this.conclusion = this.#initConclusion(conclusion);
+    }
+    #initConclusion(conclusion) {
+        if (!conclusion) {
+            return WorkflowJobStepConclusion.unknown;
+        }
+        if (!this.#isWorkflowJobStepConclusion(conclusion)) {
+            throw new Error(`Conclusion must within ${Object.values(WorkflowJobStepConclusion).join(' | ')}`);
+        }
+        return conclusion;
+    }
+    /**
+     * Info: (20250114 - Murky)
+     * Type guard of isWorkflowJobStepConclusion
+     */
+    #isWorkflowJobStepConclusion(conclusion) {
+        const isConclusion = Object.values(WorkflowJobStepConclusion).includes(conclusion);
+        return isConclusion;
+    }
+}
+
 class WorkflowJobStep {
-    static MIN_STEP_NUMBER = 0;
+    static MIN_STEP_NUMBER = 1;
     /**
      * The name of the job.
      */
@@ -31358,57 +31503,18 @@ class WorkflowJobStep {
     completedAt;
     constructor(step) {
         this.name = step.name;
-        this.#assertIsWorkflowJobStepStatus(step.status);
-        this.status = step.status;
-        this.conclusion = this.#initConclusion(step.conclusion);
-        if (step.number <= WorkflowJobStep.MIN_STEP_NUMBER) {
+        this.status = new StepStatus(step.status);
+        this.conclusion = new StepConclusion(step.conclusion);
+        if (step.number < WorkflowJobStep.MIN_STEP_NUMBER) {
             throw new Error('[WorkflowJobStep init error]: step number must larger then 0');
         }
         this.number = step.number;
-        this.startedAt = this.#initDateFromISO8601(step.started_at);
-        this.completedAt = this.#initDateFromISO8601(step.completed_at);
-    }
-    /**
-     * Convert unknown to WorkflowJobStepStatus
-     * Throw Error if not in enum
-     */
-    #assertIsWorkflowJobStepStatus(status) {
-        if (!Object.values(WorkflowJobStepStatus).includes(status)) {
-            throw new Error('[WorkflowJobStep init error]: Status is not  WorkflowJobStepStatus');
-        }
-    }
-    /**
-     * Info: (20250114 - Murky)
-     * Type guard of isWorkflowJobStepConclusion
-     */
-    #isWorkflowJobStepConclusion(conclusion) {
-        const isConclusion = Object.values(WorkflowJobStepConclusion).includes(conclusion);
-        return isConclusion;
-    }
-    #initConclusion(conclusion) {
-        if (!conclusion) {
-            return WorkflowJobStepConclusion.unknown;
-        }
-        if (!this.#isWorkflowJobStepConclusion(conclusion)) {
-            throw new Error(`[WorkflowJobStep init error]: Conclusion must within ${Object.values(WorkflowJobStepConclusion).join(' | ')}`);
-        }
-        return conclusion;
-    }
-    /**
-     * Check Date is not "invalid date"
-     */
-    #isValidDate(date) {
-        return date instanceof Date && !isNaN(date.getTime());
-    }
-    #initDateFromISO8601(date) {
-        if (!date) {
-            return null;
-        }
-        const initializedDate = new Date(date);
-        if (!this.#isValidDate(initializedDate)) {
-            return null;
-        }
-        return initializedDate;
+        this.startedAt = step.started_at
+            ? StartTime.fromISOString(step.started_at)
+            : null;
+        this.completedAt = step.completed_at
+            ? CompleteTime.fromISOString(step.completed_at)
+            : null;
     }
     /**
      * Info: (20250114 - Murky)
@@ -31426,23 +31532,108 @@ class WorkflowJobStep {
     }
 }
 
+class CreateTime extends DateTime {
+    constructor(date) {
+        super(date);
+    }
+    static fromDate(date) {
+        return new CreateTime(date);
+    }
+    static fromISOString(date) {
+        return new CreateTime(date);
+    }
+}
+
+class JobStatus {
+    status;
+    constructor(status) {
+        this.#assertIsWorkflowJobStatus(status);
+        this.status = status;
+    }
+    /**
+     * Convert unknown to WorkflowJobStatus
+     * Throw Error if not in enum
+     */
+    #assertIsWorkflowJobStatus(status) {
+        if (!Object.values(WorkflowJobStatus).includes(status)) {
+            throw new Error('Status is not WorkflowJobStepStatus');
+        }
+    }
+}
+
+class JobConclusion {
+    conclusion;
+    constructor(conclusion) {
+        this.conclusion = this.#initConclusion(conclusion);
+    }
+    /**
+     * Info: (20250116 - Murky)
+     * falsy will be set as unknown,
+     * other will check if it is matching WorkflowJobConclusion
+     */
+    #initConclusion(conclusion) {
+        if (!conclusion) {
+            return WorkflowJobConclusion.unknown;
+        }
+        if (!this.#isWorkflowJobConclusion(conclusion)) {
+            throw new Error(`Conclusion must within ${Object.values(WorkflowJobConclusion).join(' | ')}`);
+        }
+        return conclusion;
+    }
+    /**
+     * Info: (20250114 - Murky)
+     * Type guard of isWorkflowJobConclusion
+     */
+    #isWorkflowJobConclusion(conclusion) {
+        const isConclusion = Object.values(WorkflowJobConclusion).includes(conclusion);
+        return isConclusion;
+    }
+}
+
+/**
+ * Info: (20250116 - Murky)
+ * JobRun is not store all information from github repos run api
+ * this will only store run related data inside job
+ */
+class JobRun {
+    static MIN_ID = 1;
+    /**
+     * The id of the associated workflow run.
+     */
+    id;
+    /**
+     * URL of the api of associated workflow run.
+     * ex: https://api.github.com/repos/TinyMurky/ActionRelay/actions/runs/12786972425
+     */
+    url;
+    /**
+     * Attempt number of the associated workflow run.
+     */
+    attempt;
+    constructor(args) {
+        const { id, url, attempt } = args;
+        if (id < JobRun.MIN_ID) {
+            throw new Error(`Id of JobRun must equal or larger than ${JobRun.MIN_ID}, id provided: ${id}`);
+        }
+        this.id = id;
+        if (!url) {
+            throw new Error(`url of JobRun must not be empty`);
+        }
+        this.url = url;
+        this.attempt = attempt || 0;
+    }
+}
+
 class WorkflowJob {
     /**
      * The id of the job.
      */
     id;
     /**
-     * The id of the associated workflow run.
+     * Info: (20250116 - Murky)
+     * workflow run related data
      */
-    runId;
-    /**
-     * URL of the associated workflow run.
-     */
-    runUrl;
-    /**
-     * Attempt number of the associated workflow run.
-     */
-    runAttempt;
+    run;
     /**
      * The id of the node.
      */
@@ -31521,23 +31712,24 @@ class WorkflowJob {
     headBranch;
     constructor(job) {
         this.id = job.id;
-        this.runId = job.run_id;
-        this.runUrl = job.run_url;
-        this.runAttempt = job.run_attempt || 0;
+        this.run = new JobRun({
+            id: job.run_id,
+            url: job.run_url,
+            attempt: job.run_attempt
+        });
         this.nodeId = job.node_id;
         this.headSha = job.head_sha;
         this.url = job.url;
         this.htmlUrl = job.html_url ?? '';
-        this.#assertIsWorkflowJobStatus(job.status);
-        this.status = job.status;
-        this.conclusion = this.#initConclusion(job.conclusion);
-        const createdAt = this.#initDateFromISO8601(job.created_at);
-        if (!createdAt) {
-            throw new Error('[WorkflowJob init error]: createdAt must have date value');
-        }
-        this.createdAt = createdAt;
-        this.startedAt = this.#initDateFromISO8601(job.started_at);
-        this.completedAt = this.#initDateFromISO8601(job.completed_at);
+        this.status = new JobStatus(job.status);
+        this.conclusion = new JobConclusion(job.conclusion);
+        this.createdAt = CreateTime.fromISOString(job.created_at);
+        this.startedAt = job.started_at
+            ? StartTime.fromISOString(job.started_at)
+            : null;
+        this.completedAt = job.completed_at
+            ? CompleteTime.fromISOString(job.completed_at)
+            : null;
         this.name = job.name;
         // Initialize steps as WorkflowJobStep instances
         console.log(job?.steps);
@@ -31552,45 +31744,6 @@ class WorkflowJob {
         this.runnerGroupName = job.runner_group_name || '';
         this.workflowName = job.workflow_name || '';
         this.headBranch = job.head_branch || '';
-    }
-    #isValidDate(date) {
-        return date instanceof Date && !isNaN(date.getTime());
-    }
-    #initDateFromISO8601(date) {
-        if (!date) {
-            return null;
-        }
-        const initializedDate = new Date(date);
-        if (!this.#isValidDate(initializedDate)) {
-            throw new Error('[WorkflowJob init error]: Invalid date format');
-        }
-        return initializedDate;
-    }
-    /**
-     * Convert unknown to WorkflowJobStatus
-     * Throw Error if not in enum
-     */
-    #assertIsWorkflowJobStatus(status) {
-        if (!Object.values(WorkflowJobStatus).includes(status)) {
-            throw new Error('[WorkflowJobStep init error]: Status is not  WorkflowJobStepStatus');
-        }
-    }
-    /**
-     * Info: (20250114 - Murky)
-     * Type guard of isWorkflowJobConclusion
-     */
-    #isWorkflowJobStepConclusion(conclusion) {
-        const isConclusion = Object.values(WorkflowJobConclusion).includes(conclusion);
-        return isConclusion;
-    }
-    #initConclusion(conclusion) {
-        if (!conclusion) {
-            return WorkflowJobConclusion.unknown;
-        }
-        if (!this.#isWorkflowJobStepConclusion(conclusion)) {
-            throw new Error(`[WorkflowJobStep init error]: Conclusion must within ${Object.values(WorkflowJobConclusion).join(' | ')}`);
-        }
-        return conclusion;
     }
     /**
      * Check if the job has started.

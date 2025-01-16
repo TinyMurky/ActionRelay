@@ -1,23 +1,21 @@
 import { WorkflowJobStep } from '@/steps/jobSummary/workflowJobStep.js';
-import { WorkflowJobConclusion, WorkflowJobStatus, WorkflowJobType } from '@/types/job.js';
+import { WorkflowJobType } from '@/types/job.js';
+import { CompleteTime } from '@/utils/times/completeTime.js';
+import { CreateTime } from '@/utils/times/createTime.js';
+import { StartTime } from '@/utils/times/startTime.js';
+import { JobStatus } from '@/steps/jobSummary/jobStatus.js';
+import { JobConclusion } from '@/steps/jobSummary/jobConclusion.js';
+import { JobRun } from '@/steps/jobSummary/jobRun.js';
 export declare class WorkflowJob {
-    #private;
     /**
      * The id of the job.
      */
     readonly id: number;
     /**
-     * The id of the associated workflow run.
+     * Info: (20250116 - Murky)
+     * workflow run related data
      */
-    readonly runId: number;
-    /**
-     * URL of the associated workflow run.
-     */
-    readonly runUrl: string;
-    /**
-     * Attempt number of the associated workflow run.
-     */
-    readonly runAttempt: number;
+    readonly run: JobRun;
     /**
      * The id of the node.
      */
@@ -37,23 +35,23 @@ export declare class WorkflowJob {
     /**
      * The phase of the lifecycle that the job is currently in.
      */
-    readonly status: WorkflowJobStatus;
+    readonly status: JobStatus;
     /**
      * The outcome of the job.
      */
-    readonly conclusion: WorkflowJobConclusion;
+    readonly conclusion: JobConclusion;
     /**
      * Time when the job was created.
      */
-    readonly createdAt: Date;
+    readonly createdAt: CreateTime;
     /**
      * Time when the job started.
      */
-    readonly startedAt: Date | null;
+    readonly startedAt: StartTime | null;
     /**
      * Time when the job completed.
      */
-    readonly completedAt: Date | null;
+    readonly completedAt: CompleteTime | null;
     /**
      * Name of the job.
      */

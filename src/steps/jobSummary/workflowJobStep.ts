@@ -1,10 +1,10 @@
-import {
-  WorkflowJobStepConclusion,
-  WorkflowJobStepStatus
-} from '@/types/job.js'
+import { CompleteTime } from '@/utils/times/completeTime.js'
+import { StartTime } from '@/utils/times/startTime.js'
+import { StepStatus } from '@/steps/jobSummary/stepStatus.js'
+import { StepConclusion } from '@/steps/jobSummary/stepConclusion.js'
 
 export class WorkflowJobStep {
-  static readonly MIN_STEP_NUMBER = 0
+  static readonly MIN_STEP_NUMBER = 1
 
   /**
    * The name of the job.
@@ -14,14 +14,14 @@ export class WorkflowJobStep {
   /**
    * The phase of the lifecycle that the job is currently in.
    */
-  readonly status: WorkflowJobStepStatus
+  readonly status: StepStatus
 
   /**
    * The outcome of the job.
    * Ex: "Success"
    * Will be empty string if not provided
    */
-  readonly conclusion: WorkflowJobStepConclusion
+  readonly conclusion: StepConclusion
 
   /**
    * Step No, Start from 1
@@ -31,12 +31,12 @@ export class WorkflowJobStep {
   /**
    * The time that the step started, in ISO 8601 format.
    */
-  readonly startedAt: Date | null
+  readonly startedAt: StartTime | null
 
   /**
    * The time that the job finished, in ISO 8601 format.
    */
-  readonly completedAt: Date | null
+  readonly completedAt: CompleteTime | null
 
   constructor(
     step: Readonly<{
@@ -50,12 +50,11 @@ export class WorkflowJobStep {
   ) {
     this.name = step.name
 
-    this.#assertIsWorkflowJobStepStatus(step.status)
-    this.status = step.status
+    this.status = new StepStatus(step.status)
 
-    this.conclusion = this.#initConclusion(step.conclusion)
+    this.conclusion = new StepConclusion(step.conclusion)
 
-    if (step.number <= WorkflowJobStep.MIN_STEP_NUMBER) {
+    if (step.number < WorkflowJobStep.MIN_STEP_NUMBER) {
       throw new Error(
         '[WorkflowJobStep init error]: step number must larger then 0'
       )
@@ -63,77 +62,13 @@ export class WorkflowJobStep {
 
     this.number = step.number
 
-    this.startedAt = this.#initDateFromISO8601(step.started_at)
-    this.completedAt = this.#initDateFromISO8601(step.completed_at)
-  }
+    this.startedAt = step.started_at
+      ? StartTime.fromISOString(step.started_at)
+      : null
 
-  /**
-   * Convert unknown to WorkflowJobStepStatus
-   * Throw Error if not in enum
-   */
-  #assertIsWorkflowJobStepStatus(
-    status: Readonly<unknown>
-  ): asserts status is WorkflowJobStepStatus {
-    if (
-      !Object.values(WorkflowJobStepStatus).includes(
-        status as WorkflowJobStepStatus
-      )
-    ) {
-      throw new Error(
-        '[WorkflowJobStep init error]: Status is not  WorkflowJobStepStatus'
-      )
-    }
-  }
-
-  /**
-   * Info: (20250114 - Murky)
-   * Type guard of isWorkflowJobStepConclusion
-   */
-  #isWorkflowJobStepConclusion(
-    conclusion: Readonly<unknown>
-  ): conclusion is WorkflowJobStepConclusion {
-    const isConclusion = Object.values(WorkflowJobStepConclusion).includes(
-      conclusion as WorkflowJobStepConclusion
-    )
-
-    return isConclusion
-  }
-
-  #initConclusion(
-    conclusion: Readonly<string | null>
-  ): WorkflowJobStepConclusion {
-    if (!conclusion) {
-      return WorkflowJobStepConclusion.unknown
-    }
-
-    if (!this.#isWorkflowJobStepConclusion(conclusion)) {
-      throw new Error(
-        `[WorkflowJobStep init error]: Conclusion must within ${Object.values(WorkflowJobStepConclusion).join(' | ')}`
-      )
-    }
-
-    return conclusion
-  }
-
-  /**
-   * Check Date is not "invalid date"
-   */
-  #isValidDate(date: Readonly<Date>) {
-    return date instanceof Date && !isNaN(date.getTime())
-  }
-
-  #initDateFromISO8601(date: Readonly<string | null | undefined>): Date | null {
-    if (!date) {
-      return null
-    }
-
-    const initializedDate = new Date(date)
-
-    if (!this.#isValidDate(initializedDate)) {
-      return null
-    }
-
-    return initializedDate
+    this.completedAt = step.completed_at
+      ? CompleteTime.fromISOString(step.completed_at)
+      : null
   }
 
   /**

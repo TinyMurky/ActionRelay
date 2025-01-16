@@ -1,7 +1,9 @@
-import { WorkflowJobStepConclusion, WorkflowJobStepStatus } from '@/types/job.js';
+import { CompleteTime } from '@/utils/times/completeTime.js';
+import { StartTime } from '@/utils/times/startTime.js';
+import { StepStatus } from '@/steps/jobSummary/stepStatus.js';
+import { StepConclusion } from '@/steps/jobSummary/stepConclusion.js';
 export declare class WorkflowJobStep {
-    #private;
-    static readonly MIN_STEP_NUMBER = 0;
+    static readonly MIN_STEP_NUMBER = 1;
     /**
      * The name of the job.
      */
@@ -9,13 +11,13 @@ export declare class WorkflowJobStep {
     /**
      * The phase of the lifecycle that the job is currently in.
      */
-    readonly status: WorkflowJobStepStatus;
+    readonly status: StepStatus;
     /**
      * The outcome of the job.
      * Ex: "Success"
      * Will be empty string if not provided
      */
-    readonly conclusion: WorkflowJobStepConclusion;
+    readonly conclusion: StepConclusion;
     /**
      * Step No, Start from 1
      */
@@ -23,11 +25,11 @@ export declare class WorkflowJobStep {
     /**
      * The time that the step started, in ISO 8601 format.
      */
-    readonly startedAt: Date | null;
+    readonly startedAt: StartTime | null;
     /**
      * The time that the job finished, in ISO 8601 format.
      */
-    readonly completedAt: Date | null;
+    readonly completedAt: CompleteTime | null;
     constructor(step: Readonly<{
         status: 'queued' | 'in_progress' | 'completed';
         conclusion: string | null;
