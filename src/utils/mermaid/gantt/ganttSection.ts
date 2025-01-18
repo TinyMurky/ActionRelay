@@ -1,7 +1,7 @@
-import { GanttTask } from '@/utils/mermaid/gantt/ganttTask.js'
+import GanttTask from '@/utils/mermaid/gantt/ganttTask.js'
 import { CompleteTime } from '@/utils/times/completeTime.js'
 import { StartTime } from '@/utils/times/startTime.js'
-import { GanttTaskTag } from './ganttTaskTag.js'
+import GanttTaskTag from '@/utils/mermaid/gantt/ganttTaskTag.js'
 
 /**
  * Info: (20250117 - Murky)
@@ -17,7 +17,7 @@ import { GanttTaskTag } from './ganttTaskTag.js'
  * Implement parser and json           :done, 1658073453000after, 1658073458000
  * Create tests for parser             :1658073459000, 1658073654000
  */
-export class GanttSection {
+export default class GanttSection {
   readonly name: string
   readonly tasks: GanttTask[]
 
@@ -48,7 +48,13 @@ export class GanttSection {
    * Add a pre-existing GanttTask instance to the section.
    */
   pushTask(task: Readonly<GanttTask>): void {
-    this.tasks.push(task)
+    const newTask = new GanttTask({
+      name: task.name,
+      startedAt: task.startedAt,
+      completedAt: task.completedAt,
+      tags: task.tags
+    })
+    this.tasks.push(newTask)
   }
 
   /**

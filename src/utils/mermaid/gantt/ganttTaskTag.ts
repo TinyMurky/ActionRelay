@@ -1,6 +1,13 @@
 import { GanttChartTaskTag } from '@/types/ganttChart.js'
 
-export class GanttTaskTag {
+/**
+ * Info: (20250117 - Murky)
+ * active is light blue
+ * done is gray
+ * crit is red
+ * milestone is diamond shape
+ */
+export default class GanttTaskTag {
   static readonly #tagToStringMap: Record<GanttChartTaskTag, string> = {
     [GanttChartTaskTag.active]: 'active,',
     [GanttChartTaskTag.done]: 'done,',
@@ -52,7 +59,7 @@ export class GanttTaskTag {
     tag: Readonly<unknown>
   ): asserts tag is GanttChartTaskTag {
     if (!Object.values(GanttChartTaskTag).includes(tag as GanttChartTaskTag)) {
-      throw new Error('Status is not WorkflowJobStepStatus')
+      throw new Error(`Status is not GanttChartTaskTag, input tag: ${tag}`)
     }
   }
 }

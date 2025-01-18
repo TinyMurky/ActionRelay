@@ -1,6 +1,21 @@
+import { GanttChartTaskTag } from '@/types/ganttChart.js'
 import { WorkflowJobStepConclusion } from '@/types/job.js'
 
 export class StepConclusion {
+  /**
+   * Custom mapping between with Gantt tag
+   */
+  static readonly #conclusionGanttTagMapping: Record<
+    WorkflowJobStepConclusion,
+    GanttChartTaskTag
+  > = {
+    [WorkflowJobStepConclusion.success]: GanttChartTaskTag.empty, // dark blue
+    [WorkflowJobStepConclusion.failure]: GanttChartTaskTag.crit, // red
+    [WorkflowJobStepConclusion.skipped]: GanttChartTaskTag.done, // grey
+    [WorkflowJobStepConclusion.cancelled]: GanttChartTaskTag.done, // grey
+    [WorkflowJobStepConclusion.unknown]: GanttChartTaskTag.done // grey
+  }
+
   readonly conclusion: WorkflowJobStepConclusion
 
   constructor(conclusion: Readonly<string | null>) {
@@ -35,5 +50,9 @@ export class StepConclusion {
     )
 
     return isConclusion
+  }
+
+  public get ganttTag() {
+    return StepConclusion.#conclusionGanttTagMapping[this.conclusion]
   }
 }

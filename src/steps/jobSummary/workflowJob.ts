@@ -114,47 +114,121 @@ export class WorkflowJob {
    */
   readonly headBranch: string
 
-  constructor(job: Readonly<WorkflowJobType>) {
-    this.id = job.id
-    this.run = new JobRun({
+  private constructor(
+    args: Readonly<{
+      id: number
+      run: JobRun
+      nodeId: string
+      headSha: string
+      url: string
+      htmlUrl: string
+      status: JobStatus
+      conclusion: JobConclusion
+      createdAt: CreateTime
+      startedAt: StartTime | null
+      completedAt: CompleteTime | null
+      name: string
+      steps: WorkflowJobStep[]
+      checkRunUrl: string
+      labels: string[]
+      runnerId: number
+      runnerName: string
+      runnerGroupId: number
+      runnerGroupName: string
+      workflowName: string
+      headBranch: string
+    }>
+  ) {
+    this.id = args.id
+    this.run = args.run
+    this.nodeId = args.nodeId
+    this.headSha = args.headSha
+    this.url = args.url
+    this.htmlUrl = args.htmlUrl
+    this.status = args.status
+    this.conclusion = args.conclusion
+    this.createdAt = args.createdAt
+    this.startedAt = args.startedAt
+    this.completedAt = args.completedAt
+    this.name = args.name
+    this.steps = args.steps
+    this.checkRunUrl = args.checkRunUrl
+    this.labels = args.labels
+    this.runnerId = args.runnerId
+    this.runnerName = args.runnerName
+    this.runnerGroupId = args.runnerGroupId
+    this.runnerGroupName = args.runnerGroupName
+    this.workflowName = args.workflowName
+    this.headBranch = args.headBranch
+  }
+
+  /**
+   * Info: (20250117 - Murky)
+   * Transform data from github octokit to WorkflowJob
+   */
+  static fromGithub(job: Readonly<WorkflowJobType>) {
+    const id: number = job.id
+    const run = new JobRun({
       id: job.run_id,
       url: job.run_url,
       attempt: job.run_attempt
     })
-    this.nodeId = job.node_id
-    this.headSha = job.head_sha
-    this.url = job.url
-    this.htmlUrl = job.html_url ?? ''
+    const nodeId: string = job.node_id
+    const headSha: string = job.head_sha
+    const url: string = job.url
+    const htmlUrl: string = job.html_url ?? ''
 
-    this.status = new JobStatus(job.status)
-    this.conclusion = new JobConclusion(job.conclusion)
+    const status = new JobStatus(job.status)
+    const conclusion = new JobConclusion(job.conclusion)
 
-    this.createdAt = CreateTime.fromISOString(job.created_at)
+    const createdAt: CreateTime = CreateTime.fromISOString(job.created_at)
 
-    this.startedAt = job.started_at
+    const startedAt: StartTime | null = job.started_at
       ? StartTime.fromISOString(job.started_at)
       : null
 
-    this.completedAt = job.completed_at
+    const completedAt: CompleteTime | null = job.completed_at
       ? CompleteTime.fromISOString(job.completed_at)
       : null
 
-    this.name = job.name
+    const name: string = job.name
 
-    // Initialize steps as WorkflowJobStep instances
-    console.log(job?.steps)
-    this.steps = job?.steps
+    const steps: WorkflowJobStep[] = job?.steps
       ? job?.steps.map((step) => new WorkflowJobStep(step))
       : []
 
-    this.checkRunUrl = job.check_run_url
-    this.labels = job.labels
-    this.runnerId = job.runner_id || 0
-    this.runnerName = job.runner_name || ''
-    this.runnerGroupId = job.runner_group_id || 0
-    this.runnerGroupName = job.runner_group_name || ''
-    this.workflowName = job.workflow_name || ''
-    this.headBranch = job.head_branch || ''
+    const checkRunUrl: string = job.check_run_url
+    const labels: string[] = job.labels
+    const runnerId: number = job.runner_id || 0
+    const runnerName: string = job.runner_name || ''
+    const runnerGroupId: number = job.runner_group_id || 0
+    const runnerGroupName = job.runner_group_name || ''
+    const workflowName = job.workflow_name || ''
+    const headBranch = job.head_branch || ''
+
+    return new WorkflowJob({
+      id,
+      run,
+      nodeId,
+      headSha,
+      url,
+      htmlUrl,
+      status,
+      conclusion,
+      createdAt,
+      startedAt,
+      completedAt,
+      name,
+      steps,
+      checkRunUrl,
+      labels,
+      runnerId,
+      runnerName,
+      runnerGroupId,
+      runnerGroupName,
+      workflowName,
+      headBranch
+    })
   }
 
   /**
@@ -169,5 +243,35 @@ export class WorkflowJob {
    */
   public isCompleted(): boolean {
     return !!this.completedAt
+  }
+
+  public filterStepWithBothStartAtAndCompleteAt(): WorkflowJob {
+    const filteredSteps = this.steps.filter(
+      (step) => step.isStarted() && step.isCompleted()
+    )
+
+    return new WorkflowJob({
+      id: this.id,
+      run: this.run,
+      nodeId: this.nodeId,
+      headSha: this.headSha,
+      url: this.url,
+      htmlUrl: this.htmlUrl,
+      status: this.status,
+      conclusion: this.conclusion,
+      createdAt: this.createdAt,
+      startedAt: this.startedAt,
+      completedAt: this.completedAt,
+      name: this.name,
+      steps: filteredSteps,
+      checkRunUrl: this.checkRunUrl,
+      labels: this.labels,
+      runnerId: this.runnerId,
+      runnerName: this.runnerName,
+      runnerGroupId: this.runnerGroupId,
+      runnerGroupName: this.runnerGroupName,
+      workflowName: this.workflowName,
+      headBranch: this.headBranch
+    })
   }
 }

@@ -60,7 +60,7 @@ export default class ListWorkflowJobs {
       }
 
       for (const job of jobs) {
-        const workflowJob: WorkflowJob = new WorkflowJob(job)
+        const workflowJob: WorkflowJob = WorkflowJob.fromGithub(job)
         workflowJobs.push(workflowJob)
       }
 

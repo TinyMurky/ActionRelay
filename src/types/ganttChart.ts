@@ -4,14 +4,14 @@
  * @prop [empty] - This tag is not provided by Mermaid, must be transform into empty string
  */
 export enum GanttChartTaskTag {
-  active,
-  done,
-  crit,
-  milestone,
+  active = 'active',
+  done = 'done',
+  crit = 'crit',
+  milestone = 'milestone',
 
   /**
    * Info: (20250116 - Murky)
    * This tag is not provided by Mermaid, must be transform into empty string
    */
-  empty
+  empty = 'empty'
 }

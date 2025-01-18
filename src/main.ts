@@ -1,8 +1,10 @@
 import * as core from '@actions/core'
 import { githubContext } from '@/constants/github.js'
+
 import OctokitManager from '@/utils/octokit.js'
-import ListWorkflowJobs from '@/steps/jobSummary/listWorkflowJobs.js'
 import Logger from '@/utils/logger.js'
+
+import { MainJobsToGanttRunner } from '@/steps/jobSummary/MainJobsToGanttRunner.js'
 /**
  * The main function for the action.
  *
@@ -21,15 +23,12 @@ export async function run(): Promise<void> {
     const githubToken = core.getInput('GITHUB_TOKEN')
     const octokit = OctokitManager.getInstance(githubToken)
 
-    const listWorkflowJobs = new ListWorkflowJobs({
+    const stepGanttChartGenerate = new MainJobsToGanttRunner({
       octokit,
       githubContext
     })
 
-    const workflowJobs = await listWorkflowJobs.fetchFromGithub()
-
-    Logger.debug(`workflowJobs ${JSON.stringify(workflowJobs)}`)
-    Logger.debug(new Date().toTimeString())
+    await stepGanttChartGenerate.run()
 
     // Set outputs for other workflow steps to use
     core.setOutput('time', new Date().toTimeString())

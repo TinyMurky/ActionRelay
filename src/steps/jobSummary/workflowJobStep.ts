@@ -86,4 +86,12 @@ export class WorkflowJobStep {
   public isCompleted(): boolean {
     return !!this.completedAt
   }
+
+  /**
+   * Info: (20250117 - Murky)
+   * Get gantt tag base on conclusion
+   */
+  public get ganttTag() {
+    return this.conclusion.ganttTag
+  }
 }

@@ -1,10 +1,10 @@
-import { GanttSection } from '@/utils/mermaid/gantt/ganttSection.js'
-import { GanttTask } from '@/utils/mermaid/gantt/ganttTask.js'
+import GanttSection from '@/utils/mermaid/gantt/ganttSection.js'
+import GanttTask from '@/utils/mermaid/gantt/ganttTask.js'
 import { CompleteTime } from '@/utils/times/completeTime.js'
 import { StartTime } from '@/utils/times/startTime.js'
-import { GanttTaskTag } from '@/utils/mermaid/gantt/ganttTaskTag.js'
+import GanttTaskTag from '@/utils/mermaid/gantt/ganttTaskTag.js'
 
-export class GanttChart {
+export default class GanttChart {
   static readonly #DATE_FORMAT = 'x' // Info: (20250117 - Murky) Timestamp
   static readonly #AXIS_FORMAT = '%H:%M:%S'
 

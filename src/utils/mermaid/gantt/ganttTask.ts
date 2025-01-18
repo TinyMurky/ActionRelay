@@ -1,8 +1,11 @@
-import { GanttTaskTag } from '@/utils/mermaid/gantt/ganttTaskTag.js'
+import { GanttChartTaskTag } from '@/types/ganttChart.js'
+import GanttTaskTag from '@/utils/mermaid/gantt/ganttTaskTag.js'
 import { CompleteTime } from '@/utils/times/completeTime.js'
 import { StartTime } from '@/utils/times/startTime.js'
 
-export class GanttTask {
+export default class GanttTask {
+  static #MILESTONE_KEYWORDS = ['Set up job', 'Complete job']
+
   readonly name: string
 
   /**
@@ -45,6 +48,8 @@ export class GanttTask {
     // Info: (20250116 - Murky) all param in completedAt is readonly,
     // so it is safe to not init new one
     this.completedAt = completedAt
+
+    this.#addMilestoneTagIfApplicable()
   }
 
   public pushTag(tag: Readonly<GanttTaskTag>): void {
@@ -73,17 +78,41 @@ export class GanttTask {
   }
 
   public toString(): string {
-    const tagsSyntax: string = this.tags.map((tag) => tag.toString()).join(' ')
+    const tagsSyntax: string = Array.from(
+      new Set(this.tags.map((tag) => tag.toString()))
+    ).join(' ')
+
+    const startedAtTimestamp = Math.min(
+      this.startedAt.timestamp,
+      this.completedAt.timestamp
+    )
+
     const ganttTaskSyntax: string =
       '    ' +
       this.name +
       ' :' +
       tagsSyntax +
       ' ' +
-      this.startedAt.timestamp +
+      startedAtTimestamp +
       ', ' +
       this.completedAt.timestamp
 
     return ganttTaskSyntax
+  }
+
+  #addMilestoneTagIfApplicable() {
+    if (this.#isMilestoneTask() && !this.#isMilestoneTagExist()) {
+      this.addMilestoneTag()
+    }
+  }
+
+  #isMilestoneTask(): boolean {
+    return GanttTask.#MILESTONE_KEYWORDS.some((keyword) =>
+      this.name.includes(keyword)
+    )
+  }
+
+  #isMilestoneTagExist(): boolean {
+    return this.tags.some((tag) => tag.tag === GanttChartTaskTag.milestone)
   }
 }
