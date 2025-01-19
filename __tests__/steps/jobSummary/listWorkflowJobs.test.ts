@@ -7,72 +7,61 @@
  */
 import { jest } from '@jest/globals'
 import * as core from '../../../__fixtures__/core.js'
+import { mockOctokit } from '../../../__fixtures__/node_module/octokit.js'
+import { GitHubInstance } from '../../../src/types/github.js'
 
-// import ListWorkflowJobs from '../../../src/apis/repos/listWorkflowJobs.js'
-// import OctokitManager from '../../../src/utils/octokit.js'
-// import { githubContext } from '../../../src/constants/github.js'
 // Mocks should be declared before the module being tested is imported.
 jest.unstable_mockModule('@actions/core', () => core)
 
 // The module being tested should be imported dynamically. This ensures that the
 // mocks are used in place of any actual dependencies.
 
-describe('apis/repo/listWorkflowJobs', () => {
-  const OLD_ENV = process.env
+afterAll(() => {
+  jest.resetAllMocks()
+})
 
-  // const mockGithubContext = {
-  //   payload: {
-  //     action: 'opened',
-  //     issue: {
-  //       number: 42
-  //     }
-  //   },
-  //   eventName: 'push',
-  //   sha: 'mock-sha',
-  //   ref: 'refs/heads/main',
-  //   workflow: 'test-workflow',
-  //   action: 'test-action',
-  //   actor: 'test-actor',
-  //   job: 'test-job',
-  //   runNumber: 123,
-  //   runId: 456,
-  //   apiUrl: 'https://api.mock.github.com',
-  //   serverUrl: 'https://mock.github.com',
-  //   graphqlUrl: 'https://api.mock.github.com/graphql',
-  //   get issue() {
-  //     return { owner: 'mock-owner', repo: 'mock-repo', number: 42 }
-  //   },
-  //   get repo() {
-  //     return { owner: 'mock-owner', repo: 'mock-repo' }
-  //   }
-  // }
+// import ListWorkflowJobs from '../../../src/apis/repos/listWorkflowJobs.js'
+const { default: ListWorkflowJobs } = await import(
+  '../../../src/steps/jobSummary/listWorkflowJobs.js'
+)
 
-  beforeEach(() => {
-    jest.resetModules() // FOR env: Most important - it clears the cache
-    process.env = { ...OLD_ENV } // Make a copy
+describe('steps/jobSummary/listWorkflowJobs', () => {
+  const mockGithubContext = {
+    payload: {
+      action: 'opened',
+      issue: {
+        number: 42
+      }
+    },
+    eventName: 'push',
+    sha: 'mock-sha',
+    ref: 'refs/heads/main',
+    workflow: 'test-workflow',
+    action: 'test-action',
+    actor: 'test-actor',
+    job: 'test-job',
+    runNumber: 123,
+    runId: 456,
+    apiUrl: 'https://api.mock.github.com',
+    serverUrl: 'https://mock.github.com',
+    graphqlUrl: 'https://api.mock.github.com/graphql',
+    get issue() {
+      return { owner: 'mock-owner', repo: 'mock-repo', number: 42 }
+    },
+    get repo() {
+      return { owner: 'mock-owner', repo: 'mock-repo' }
+    }
+  }
+
+  it('Should fetch jobs', async () => {
+    const octokit = new mockOctokit() as unknown as GitHubInstance
+    const listWorkflowJobs = new ListWorkflowJobs({
+      octokit,
+      githubContext: mockGithubContext
+    })
+    const workflowJobs = await listWorkflowJobs.fetchFromGithub()
+    console.log(JSON.stringify(workflowJobs))
+
+    expect(workflowJobs.length).toBeGreaterThan(0)
   })
-
-  afterEach(() => {
-    jest.resetAllMocks()
-  })
-
-  afterAll(() => {
-    process.env = OLD_ENV // Restore old environment
-  })
-
-  it('Should implement later', () => {
-    expect(1).toBe(1)
-  })
-
-  // it('Should fetch jobs', async () => {
-  //   console.log('githubContext: ', githubContext)
-  //   const octokit = OctokitManager.getInstance()
-  //   console.log(octokit)
-  //   const listWorkflowJobs = new ListWorkflowJobs({
-  //     octokit,
-  //     githubContext
-  //   })
-  //   const workflowJobs = await listWorkflowJobs.fetchFromGithub()
-  //   console.log(JSON.stringify(workflowJobs))
-  // })
 })

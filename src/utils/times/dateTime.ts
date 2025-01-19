@@ -1,4 +1,4 @@
-export class DateTime {
+export default class DateTime {
   readonly date: Date
 
   constructor(date: Readonly<string | Date>) {
@@ -60,6 +60,7 @@ export class DateTime {
     }
 
     const normalizedIsoData = this.#normalizeISOString(isoDateString)
+
     const normalizedParsedData = this.#normalizeISOString(
       parsedDate.toISOString()
     )
@@ -74,6 +75,6 @@ export class DateTime {
    * Since the ISO string provide by github is like 2025-01-15T11:04:32Z
    */
   #normalizeISOString(isoDateString: Readonly<string>): string {
-    return isoDateString.replace(/\.000Z$/, 'Z')
+    return isoDateString.replace(/\.\d{1,3}Z$/, 'Z')
   }
 }

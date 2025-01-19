@@ -3,7 +3,7 @@
  * JobRun is not store all information from github repos run api
  * this will only store run related data inside job
  */
-export class JobRun {
+export default class JobRun {
   static readonly MIN_ID = 1
 
   /**

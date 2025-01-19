@@ -4,14 +4,13 @@
  * - https://jestjs.io/docs/manual-mocks
  */
 import { jest } from '@jest/globals'
-const mockFetchFromGithub = jest
-  .fn()
-  .mockImplementation(() => Promise.resolve([{}]))
 
-const mockListWorkflow = jest.fn().mockImplementation(() => {
+const mockJobRun = jest.fn().mockImplementation(() => {
   return {
-    fetchFromGithub: mockFetchFromGithub
+    id: 12786972425,
+    url: 'https://api.github.com/repos/TinyMurky/ActionRelay/actions/runs/12786972425',
+    attempt: 1
   }
 })
 
-export default mockListWorkflow
+export default mockJobRun

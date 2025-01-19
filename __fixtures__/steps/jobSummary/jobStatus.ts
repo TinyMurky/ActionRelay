@@ -4,14 +4,14 @@
  * - https://jestjs.io/docs/manual-mocks
  */
 import { jest } from '@jest/globals'
-const mockFetchFromGithub = jest
-  .fn()
-  .mockImplementation(() => Promise.resolve([{}]))
+import { WorkflowJobStatus } from '../../../src/types/job.js'
 
-const mockListWorkflow = jest.fn().mockImplementation(() => {
+const mockStatus = WorkflowJobStatus.completed
+
+const mockJobStatus = jest.fn().mockImplementation(() => {
   return {
-    fetchFromGithub: mockFetchFromGithub
+    status: mockStatus
   }
 })
 
-export default mockListWorkflow
+export default mockJobStatus

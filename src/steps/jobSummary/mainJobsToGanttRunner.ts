@@ -4,7 +4,7 @@ import { Context } from '@actions/github/lib/context.js'
 import Logger from '@/utils/logger.js'
 
 import ListWorkflowJobs from '@/steps/jobSummary/listWorkflowJobs.js'
-import { WorkflowJob } from '@/steps/jobSummary/workflowJob.js'
+import WorkflowJob from '@/steps/jobSummary/workflowJob.js'
 import JobGanttChartDrawer from '@/steps/jobSummary/jobGanttChartDrawer.js'
 
 /**
@@ -12,7 +12,7 @@ import JobGanttChartDrawer from '@/steps/jobSummary/jobGanttChartDrawer.js'
  * from GitHub jobs.
  * It is intended to be used exclusively in the main function.
  */
-export class MainJobsToGanttRunner {
+export default class MainJobsToGanttRunner {
   readonly #octokit: GitHubInstance
   readonly #githubContext: Context
 

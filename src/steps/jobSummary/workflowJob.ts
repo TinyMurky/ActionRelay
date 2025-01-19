@@ -1,13 +1,13 @@
-import { WorkflowJobStep } from '@/steps/jobSummary/workflowJobStep.js'
+import WorkflowJobStep from '@/steps/jobSummary/workflowJobStep.js'
 import { WorkflowJobType } from '@/types/job.js'
-import { CompleteTime } from '@/utils/times/completeTime.js'
-import { CreateTime } from '@/utils/times/createTime.js'
-import { StartTime } from '@/utils/times/startTime.js'
-import { JobStatus } from '@/steps/jobSummary/jobStatus.js'
-import { JobConclusion } from '@/steps/jobSummary/jobConclusion.js'
-import { JobRun } from '@/steps/jobSummary/jobRun.js'
+import CompleteTime from '@/utils/times/completeTime.js'
+import CreateTime from '@/utils/times/createTime.js'
+import StartTime from '@/utils/times/startTime.js'
+import JobStatus from '@/steps/jobSummary/jobStatus.js'
+import JobConclusion from '@/steps/jobSummary/jobConclusion.js'
+import JobRun from '@/steps/jobSummary/jobRun.js'
 
-export class WorkflowJob {
+export default class WorkflowJob {
   /**
    * The id of the job.
    */

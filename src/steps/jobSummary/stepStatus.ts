@@ -1,6 +1,6 @@
 import { WorkflowJobStepStatus } from '@/types/job.js'
 
-export class StepStatus {
+export default class StepStatus {
   readonly status: WorkflowJobStepStatus
 
   constructor(status: Readonly<unknown>) {

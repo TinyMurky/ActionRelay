@@ -4,14 +4,14 @@
  * - https://jestjs.io/docs/manual-mocks
  */
 import { jest } from '@jest/globals'
-const mockFetchFromGithub = jest
-  .fn()
-  .mockImplementation(() => Promise.resolve([{}]))
 
-const mockListWorkflow = jest.fn().mockImplementation(() => {
+const mockDateTime = jest.fn((date: Date | string) => {
+  const newDate = new Date(date)
+
   return {
-    fetchFromGithub: mockFetchFromGithub
+    date: newDate,
+    timestamp: jest.fn().mockImplementation(() => newDate.getTime())
   }
 })
 
-export default mockListWorkflow
+export default mockDateTime

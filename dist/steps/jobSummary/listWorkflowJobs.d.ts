@@ -1,6 +1,6 @@
 import { GitHubInstance } from '@/types/github.js';
 import { Context } from '@actions/github/lib/context.js';
-import { WorkflowJob } from '@/steps/jobSummary/workflowJob.js';
+import WorkflowJob from '@/steps/jobSummary/workflowJob.js';
 /**
  * Info: (20250113 - Murky)
  *

@@ -7,20 +7,23 @@
  */
 import { jest } from '@jest/globals'
 import * as core from '../__fixtures__/core.js'
-import * as ListWorkflowJobs from '../__fixtures__/steps/jobSummary/listWorkflowJobs.js'
+import * as OctokitManager from '../__fixtures__/utils/octokitManager.js'
+import * as MainJobsToGanttRunner from '../__fixtures__/steps/jobSummary/mainJobsToGanttRunner.js'
 
 // Below is how to mock an class directly in factory
-// jest.unstable_mockModule('../src/apis/repos/listWorkflowJobs', () => {
+// jest.unstable_mockModule('../src/steps/jobSummary/listWorkflowJobs', () => {
 //   return {
 //     default: jest.fn().mockImplementation(() => ({
 //       fetchFromGithub: jest.fn().mockImplementation(() => Promise.resolve([{}]))
 //     }))
 //   }
 // })
+jest.unstable_mockModule('../src/utils/octokitManager', () => OctokitManager)
 jest.unstable_mockModule(
-  '../src/steps/jobSummary/listWorkflowJobs',
-  () => ListWorkflowJobs
+  '../src/steps/jobSummary/mainJobsToGanttRunner',
+  () => MainJobsToGanttRunner
 )
+
 // Mocks should be declared before the module being tested is imported.
 jest.unstable_mockModule('@actions/core', () => core)
 
@@ -31,7 +34,7 @@ const { run } = await import('../src/main.js')
 describe('main.ts', () => {
   beforeEach(() => {
     // Set the action's inputs as return values from core.getInput().
-    core.getInput.mockImplementation(() => '500')
+    core.getInput.mockImplementation(() => 'MOCK_GITHUB_TOKEN')
   })
 
   afterEach(() => {
@@ -50,21 +53,15 @@ describe('main.ts', () => {
     )
   })
 
-  // it('Sets a failed status', async () => {
-  //   // Clear the getInput mock and return an invalid value.
-  //   core.getInput.mockClear().mockReturnValueOnce('this is not a number')
+  it('Handles errors correctly', async () => {
+    // MainJobsToGanttRunner.default.prototype.run = jest.fn(() =>
+    //   Promise.reject(new Error('Mock error during execution'))
+    // )
+    jest
+      .spyOn(MainJobsToGanttRunner, 'default')
+      .mockImplementation(() => new Error('Mock error during execution'))
+    await run()
 
-  //   // Clear the wait mock and return a rejected promise.
-  //   wait
-  //     .mockClear()
-  //     .mockRejectedValueOnce(new Error('milliseconds is not a number'))
-
-  //   await run()
-
-  //   // Verify that the action was marked as failed.
-  //   expect(core.setFailed).toHaveBeenNthCalledWith(
-  //     1,
-  //     'milliseconds is not a number'
-  //   )
-  // })
+    expect(core.setFailed).toHaveBeenCalled()
+  })
 })

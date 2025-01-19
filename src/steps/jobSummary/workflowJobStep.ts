@@ -1,9 +1,9 @@
-import { CompleteTime } from '@/utils/times/completeTime.js'
-import { StartTime } from '@/utils/times/startTime.js'
-import { StepStatus } from '@/steps/jobSummary/stepStatus.js'
-import { StepConclusion } from '@/steps/jobSummary/stepConclusion.js'
+import CompleteTime from '@/utils/times/completeTime.js'
+import StartTime from '@/utils/times/startTime.js'
+import StepStatus from '@/steps/jobSummary/stepStatus.js'
+import StepConclusion from '@/steps/jobSummary/stepConclusion.js'
 
-export class WorkflowJobStep {
+export default class WorkflowJobStep {
   static readonly MIN_STEP_NUMBER = 1
 
   /**

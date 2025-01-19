@@ -4,14 +4,11 @@
  * - https://jestjs.io/docs/manual-mocks
  */
 import { jest } from '@jest/globals'
-const mockFetchFromGithub = jest
-  .fn()
-  .mockImplementation(() => Promise.resolve([{}]))
 
-const mockListWorkflow = jest.fn().mockImplementation(() => {
+const mockMainJobsToGanttRunner = jest.fn().mockImplementation(() => {
   return {
-    fetchFromGithub: mockFetchFromGithub
+    run: jest.fn(() => Promise.resolve())
   }
 })
 
-export default mockListWorkflow
+export default mockMainJobsToGanttRunner

@@ -1,7 +1,7 @@
 import { GanttChartTaskTag } from '@/types/ganttChart.js'
 import { WorkflowJobStepConclusion } from '@/types/job.js'
 
-export class StepConclusion {
+export default class StepConclusion {
   /**
    * Custom mapping between with Gantt tag
    */
@@ -19,17 +19,17 @@ export class StepConclusion {
   readonly conclusion: WorkflowJobStepConclusion
 
   constructor(conclusion: Readonly<string | null>) {
-    this.conclusion = this.#initConclusion(conclusion)
+    this.conclusion = StepConclusion.#initConclusion(conclusion)
   }
 
-  #initConclusion(
+  static #initConclusion(
     conclusion: Readonly<string | null>
   ): WorkflowJobStepConclusion {
     if (!conclusion) {
       return WorkflowJobStepConclusion.unknown
     }
 
-    if (!this.#isWorkflowJobStepConclusion(conclusion)) {
+    if (!StepConclusion.#isWorkflowJobStepConclusion(conclusion)) {
       throw new Error(
         `Conclusion must within ${Object.values(WorkflowJobStepConclusion).join(' | ')}`
       )
@@ -42,7 +42,7 @@ export class StepConclusion {
    * Info: (20250114 - Murky)
    * Type guard of isWorkflowJobStepConclusion
    */
-  #isWorkflowJobStepConclusion(
+  static #isWorkflowJobStepConclusion(
     conclusion: Readonly<unknown>
   ): conclusion is WorkflowJobStepConclusion {
     const isConclusion = Object.values(WorkflowJobStepConclusion).includes(

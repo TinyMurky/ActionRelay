@@ -1,6 +1,6 @@
-import { DateTime } from '@/utils/times/dateTime.js'
+import DateTime from '@/utils/times/dateTime.js'
 
-export class CreateTime extends DateTime {
+export default class CreateTime extends DateTime {
   private constructor(date: Readonly<string | Date>) {
     super(date)
   }

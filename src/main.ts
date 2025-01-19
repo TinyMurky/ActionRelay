@@ -1,10 +1,10 @@
 import * as core from '@actions/core'
 import { githubContext } from '@/constants/github.js'
 
-import OctokitManager from '@/utils/octokit.js'
+import OctokitManager from '@/utils/octokitManager.js'
 import Logger from '@/utils/logger.js'
 
-import { MainJobsToGanttRunner } from '@/steps/jobSummary/MainJobsToGanttRunner.js'
+import MainJobsToGanttRunner from '@/steps/jobSummary/mainJobsToGanttRunner.js'
 /**
  * The main function for the action.
  *

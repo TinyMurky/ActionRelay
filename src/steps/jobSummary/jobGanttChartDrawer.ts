@@ -1,4 +1,4 @@
-import { WorkflowJob } from '@/steps/jobSummary/workflowJob.js'
+import WorkflowJob from '@/steps/jobSummary/workflowJob.js'
 import FileSystem from '@/utils/fileSystem.js'
 import GanttChart from '@/utils/mermaid/gantt/ganttChart.js'
 import GanttTaskTag from '@/utils/mermaid/gantt/ganttTaskTag.js'

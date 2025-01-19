@@ -1,6 +1,6 @@
 import { WorkflowJobConclusion } from '@/types/job.js'
 
-export class JobConclusion {
+export default class JobConclusion {
   readonly conclusion: WorkflowJobConclusion
 
   constructor(conclusion: Readonly<string | null>) {
