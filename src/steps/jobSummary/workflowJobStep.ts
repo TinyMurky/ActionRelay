@@ -40,7 +40,7 @@ export default class WorkflowJobStep {
 
   constructor(
     step: Readonly<{
-      status: 'queued' | 'in_progress' | 'completed'
+      status: 'queued' | 'in_progress' | 'completed' | 'pending'
       conclusion: string | null
       name: string
       number: number

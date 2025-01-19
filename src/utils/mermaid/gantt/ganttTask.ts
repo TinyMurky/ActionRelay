@@ -1,7 +1,7 @@
 import { GanttChartTaskTag } from '@/types/ganttChart.js'
 import GanttTaskTag from '@/utils/mermaid/gantt/ganttTaskTag.js'
-import { CompleteTime } from '@/utils/times/completeTime.js'
-import { StartTime } from '@/utils/times/startTime.js'
+import CompleteTime from '@/utils/times/completeTime.js'
+import StartTime from '@/utils/times/startTime.js'
 
 export default class GanttTask {
   static #MILESTONE_KEYWORDS = ['Set up job', 'Complete job']

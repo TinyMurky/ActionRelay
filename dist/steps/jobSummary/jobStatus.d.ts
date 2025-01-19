@@ -1,5 +1,5 @@
 import { WorkflowJobStatus } from '@/types/job.js';
-export declare class JobStatus {
+export default class JobStatus {
     #private;
     readonly status: WorkflowJobStatus;
     constructor(status: Readonly<unknown>);

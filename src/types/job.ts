@@ -5,7 +5,8 @@ import { components } from '@octokit/openapi-types'
 export enum WorkflowJobStepStatus {
   queue = 'queue',
   in_progress = 'in_progress',
-  completed = 'completed'
+  completed = 'completed',
+  pending = 'pending'
 }
 
 export enum WorkflowJobStepConclusion {

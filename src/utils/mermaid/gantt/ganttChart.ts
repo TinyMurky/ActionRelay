@@ -1,7 +1,7 @@
 import GanttSection from '@/utils/mermaid/gantt/ganttSection.js'
 import GanttTask from '@/utils/mermaid/gantt/ganttTask.js'
-import { CompleteTime } from '@/utils/times/completeTime.js'
-import { StartTime } from '@/utils/times/startTime.js'
+import CompleteTime from '@/utils/times/completeTime.js'
+import StartTime from '@/utils/times/startTime.js'
 import GanttTaskTag from '@/utils/mermaid/gantt/ganttTaskTag.js'
 
 export default class GanttChart {

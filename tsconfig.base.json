@@ -21,7 +21,10 @@
     "target": "ES2022",
     "baseUrl": ".", // root of your "paths" below. Required if "paths" is defined
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@mermaid-js/mermaid-cli": [
+        "node_modules/@mermaid-js/mermaid-cli" // for roll up to recognized path
+      ]
     }
   }
 }

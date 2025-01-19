@@ -1,12 +1,12 @@
-import { WorkflowJobStep } from '@/steps/jobSummary/workflowJobStep.js';
+import WorkflowJobStep from '@/steps/jobSummary/workflowJobStep.js';
 import { WorkflowJobType } from '@/types/job.js';
-import { CompleteTime } from '@/utils/times/completeTime.js';
-import { CreateTime } from '@/utils/times/createTime.js';
-import { StartTime } from '@/utils/times/startTime.js';
-import { JobStatus } from '@/steps/jobSummary/jobStatus.js';
-import { JobConclusion } from '@/steps/jobSummary/jobConclusion.js';
-import { JobRun } from '@/steps/jobSummary/jobRun.js';
-export declare class WorkflowJob {
+import CompleteTime from '@/utils/times/completeTime.js';
+import CreateTime from '@/utils/times/createTime.js';
+import StartTime from '@/utils/times/startTime.js';
+import JobStatus from '@/steps/jobSummary/jobStatus.js';
+import JobConclusion from '@/steps/jobSummary/jobConclusion.js';
+import JobRun from '@/steps/jobSummary/jobRun.js';
+export default class WorkflowJob {
     /**
      * The id of the job.
      */
@@ -92,7 +92,12 @@ export declare class WorkflowJob {
      * The name of the current branch. If null will be assign as ''
      */
     readonly headBranch: string;
-    constructor(job: Readonly<WorkflowJobType>);
+    private constructor();
+    /**
+     * Info: (20250117 - Murky)
+     * Transform data from github octokit to WorkflowJob
+     */
+    static fromGithub(job: Readonly<WorkflowJobType>): WorkflowJob;
     /**
      * Check if the job has started.
      */
@@ -101,4 +106,5 @@ export declare class WorkflowJob {
      * Check if the job is completed.
      */
     isCompleted(): boolean;
+    filterStepWithBothStartAtAndCompleteAt(): WorkflowJob;
 }

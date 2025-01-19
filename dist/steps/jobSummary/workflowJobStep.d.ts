@@ -1,8 +1,8 @@
-import { CompleteTime } from '@/utils/times/completeTime.js';
-import { StartTime } from '@/utils/times/startTime.js';
-import { StepStatus } from '@/steps/jobSummary/stepStatus.js';
-import { StepConclusion } from '@/steps/jobSummary/stepConclusion.js';
-export declare class WorkflowJobStep {
+import CompleteTime from '@/utils/times/completeTime.js';
+import StartTime from '@/utils/times/startTime.js';
+import StepStatus from '@/steps/jobSummary/stepStatus.js';
+import StepConclusion from '@/steps/jobSummary/stepConclusion.js';
+export default class WorkflowJobStep {
     static readonly MIN_STEP_NUMBER = 1;
     /**
      * The name of the job.
@@ -31,7 +31,7 @@ export declare class WorkflowJobStep {
      */
     readonly completedAt: CompleteTime | null;
     constructor(step: Readonly<{
-        status: 'queued' | 'in_progress' | 'completed';
+        status: 'queued' | 'in_progress' | 'completed' | 'pending';
         conclusion: string | null;
         name: string;
         number: number;
@@ -48,4 +48,9 @@ export declare class WorkflowJobStep {
      * Check if step is completed by checking if completedAt has value
      */
     isCompleted(): boolean;
+    /**
+     * Info: (20250117 - Murky)
+     * Get gantt tag base on conclusion
+     */
+    get ganttTag(): import("../../types/ganttChart.js").GanttChartTaskTag;
 }

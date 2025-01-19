@@ -1,4 +1,4 @@
-export declare class DateTime {
+export default class DateTime {
     #private;
     readonly date: Date;
     constructor(date: Readonly<string | Date>);

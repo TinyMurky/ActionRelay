@@ -1,5 +1,7 @@
 import { run } from '@mermaid-js/mermaid-cli'
+
 import path from 'path'
+
 export default class MermaidExporter {
   static readonly mermaidConfig = {
     parseMMDOptions: {

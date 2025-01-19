@@ -1,32 +1,33 @@
 import require$$0 from 'os';
 import require$$0$1 from 'crypto';
-import require$$1 from 'fs';
-import require$$1$5 from 'path';
+import fs from 'fs';
+import path from 'path';
 import require$$2$1 from 'http';
 import require$$3$1 from 'https';
 import require$$0$5 from 'net';
-import require$$1$1 from 'tls';
+import require$$1 from 'tls';
 import require$$4$1 from 'events';
 import require$$0$3 from 'assert';
 import require$$0$2 from 'util';
 import require$$0$4 from 'stream';
 import require$$7 from 'buffer';
 import require$$8 from 'querystring';
-import require$$13 from 'stream/web';
+import require$$14 from 'stream/web';
 import require$$0$7 from 'node:stream';
-import require$$1$2 from 'node:util';
+import require$$1$1 from 'node:util';
 import require$$0$6 from 'node:events';
 import require$$0$8 from 'worker_threads';
 import require$$2$2 from 'perf_hooks';
 import require$$5 from 'util/types';
 import require$$4$2 from 'async_hooks';
-import require$$1$3 from 'console';
-import require$$1$4 from 'url';
+import require$$1$2 from 'console';
+import require$$1$3, { fileURLToPath } from 'url';
 import require$$3$2 from 'zlib';
 import require$$6 from 'string_decoder';
 import require$$0$9 from 'diagnostics_channel';
 import require$$2$3 from 'child_process';
 import require$$6$1 from 'timers';
+import { run as run$1 } from '@mermaid-js/mermaid-cli';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -251,7 +252,7 @@ function requireFileCommand () {
 	// We use any as a valid input type
 	/* eslint-disable @typescript-eslint/no-explicit-any */
 	const crypto = __importStar(require$$0$1);
-	const fs = __importStar(require$$1);
+	const fs$1 = __importStar(fs);
 	const os = __importStar(require$$0);
 	const utils_1 = requireUtils$3();
 	function issueFileCommand(command, message) {
@@ -259,10 +260,10 @@ function requireFileCommand () {
 	    if (!filePath) {
 	        throw new Error(`Unable to find environment variable for file command ${command}`);
 	    }
-	    if (!fs.existsSync(filePath)) {
+	    if (!fs$1.existsSync(filePath)) {
 	        throw new Error(`Missing file at path: ${filePath}`);
 	    }
-	    fs.appendFileSync(filePath, `${(0, utils_1.toCommandValue)(message)}${os.EOL}`, {
+	    fs$1.appendFileSync(filePath, `${(0, utils_1.toCommandValue)(message)}${os.EOL}`, {
 	        encoding: 'utf8'
 	    });
 	}
@@ -401,7 +402,7 @@ var hasRequiredTunnel$1;
 function requireTunnel$1 () {
 	if (hasRequiredTunnel$1) return tunnel$1;
 	hasRequiredTunnel$1 = 1;
-	var tls = require$$1$1;
+	var tls = require$$1;
 	var http = require$$2$1;
 	var https = require$$3$1;
 	var events = require$$4$1;
@@ -1497,7 +1498,7 @@ function requireUtil$6 () {
 	let ReadableStream;
 	function ReadableStreamFrom (iterable) {
 	  if (!ReadableStream) {
-	    ReadableStream = require$$13.ReadableStream;
+	    ReadableStream = require$$14.ReadableStream;
 	  }
 
 	  if (ReadableStream.from) {
@@ -1783,7 +1784,7 @@ function requireSbmh () {
 	 * by Hongli Lai at: https://github.com/FooBarWidget/boyer-moore-horspool
 	 */
 	const EventEmitter = require$$0$6.EventEmitter;
-	const inherits = require$$1$2.inherits;
+	const inherits = require$$1$1.inherits;
 
 	function SBMH (needle) {
 	  if (typeof needle === 'string') {
@@ -1992,7 +1993,7 @@ function requirePartStream () {
 	if (hasRequiredPartStream) return PartStream_1;
 	hasRequiredPartStream = 1;
 
-	const inherits = require$$1$2.inherits;
+	const inherits = require$$1$1.inherits;
 	const ReadableStream = require$$0$7.Readable;
 
 	function PartStream (opts) {
@@ -2038,7 +2039,7 @@ function requireHeaderParser () {
 	hasRequiredHeaderParser = 1;
 
 	const EventEmitter = require$$0$6.EventEmitter;
-	const inherits = require$$1$2.inherits;
+	const inherits = require$$1$1.inherits;
 	const getLimit = requireGetLimit();
 
 	const StreamSearch = requireSbmh();
@@ -2146,7 +2147,7 @@ function requireDicer () {
 	hasRequiredDicer = 1;
 
 	const WritableStream = require$$0$7.Writable;
-	const inherits = require$$1$2.inherits;
+	const inherits = require$$1$1.inherits;
 
 	const StreamSearch = requireSbmh();
 
@@ -2723,7 +2724,7 @@ function requireMultipart () {
 	//     -- this will require modifications to utils.parseParams
 
 	const { Readable } = require$$0$7;
-	const { inherits } = require$$1$2;
+	const { inherits } = require$$1$1;
 
 	const Dicer = requireDicer();
 
@@ -3289,7 +3290,7 @@ function requireMain () {
 	hasRequiredMain = 1;
 
 	const WritableStream = require$$0$7.Writable;
-	const { inherits } = require$$1$2;
+	const { inherits } = require$$1$1;
 	const Dicer = requireDicer();
 
 	const MultipartParser = requireMultipart();
@@ -4554,7 +4555,7 @@ function requireUtil$5 () {
 
 	function isReadableStreamLike (stream) {
 	  if (!ReadableStream) {
-	    ReadableStream = require$$13.ReadableStream;
+	    ReadableStream = require$$14.ReadableStream;
 	  }
 
 	  return stream instanceof ReadableStream || (
@@ -6694,6 +6695,14 @@ function requireBody () {
 	const { File: UndiciFile } = requireFile();
 	const { parseMIMEType, serializeAMimeType } = requireDataURL();
 
+	let random;
+	try {
+	  const crypto = require('node:crypto');
+	  random = (max) => crypto.randomInt(0, max);
+	} catch {
+	  random = (max) => Math.floor(Math.random(max));
+	}
+
 	let ReadableStream = globalThis.ReadableStream;
 
 	/** @type {globalThis['File']} */
@@ -6704,7 +6713,7 @@ function requireBody () {
 	// https://fetch.spec.whatwg.org/#concept-bodyinit-extract
 	function extractBody (object, keepalive = false) {
 	  if (!ReadableStream) {
-	    ReadableStream = require$$13.ReadableStream;
+	    ReadableStream = require$$14.ReadableStream;
 	  }
 
 	  // 1. Let stream be null.
@@ -6779,7 +6788,7 @@ function requireBody () {
 	    // Set source to a copy of the bytes held by object.
 	    source = new Uint8Array(object.buffer.slice(object.byteOffset, object.byteOffset + object.byteLength));
 	  } else if (util.isFormDataLike(object)) {
-	    const boundary = `----formdata-undici-0${`${Math.floor(Math.random() * 1e11)}`.padStart(11, '0')}`;
+	    const boundary = `----formdata-undici-0${`${random(1e11)}`.padStart(11, '0')}`;
 	    const prefix = `--${boundary}\r\nContent-Disposition: form-data`;
 
 	    /*! formdata-polyfill. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
@@ -6925,7 +6934,7 @@ function requireBody () {
 	function safelyExtractBody (object, keepalive = false) {
 	  if (!ReadableStream) {
 	    // istanbul ignore next
-	    ReadableStream = require$$13.ReadableStream;
+	    ReadableStream = require$$14.ReadableStream;
 	  }
 
 	  // To safely extract a body and a `Content-Type` value from
@@ -8105,7 +8114,7 @@ function requireConnect () {
 	    let socket;
 	    if (protocol === 'https:') {
 	      if (!tls) {
-	        tls = require$$1$1;
+	        tls = require$$1;
 	      }
 	      servername = servername || options.servername || util.getServerName(host) || null;
 
@@ -14115,7 +14124,7 @@ function requirePendingInterceptorsFormatter () {
 	hasRequiredPendingInterceptorsFormatter = 1;
 
 	const { Transform } = require$$0$4;
-	const { Console } = require$$1$3;
+	const { Console } = require$$1$2;
 
 	/**
 	 * Gets the output of `console.table(…)` as a string.
@@ -14342,7 +14351,7 @@ function requireProxyAgent () {
 	hasRequiredProxyAgent = 1;
 
 	const { kProxy, kClose, kDestroy, kInterceptors } = requireSymbols$4();
-	const { URL } = require$$1$4;
+	const { URL } = require$$1$3;
 	const Agent = requireAgent();
 	const Pool = requirePool();
 	const DispatcherBase = requireDispatcherBase();
@@ -15581,7 +15590,7 @@ function requireResponse () {
 	const assert = require$$0$3;
 	const { types } = require$$0$2;
 
-	const ReadableStream = globalThis.ReadableStream || require$$13.ReadableStream;
+	const ReadableStream = globalThis.ReadableStream || require$$14.ReadableStream;
 	const textEncoder = new TextEncoder('utf-8');
 
 	// https://fetch.spec.whatwg.org/#response-class
@@ -16650,7 +16659,7 @@ function requireRequest () {
 
 	      // 2. Set finalBody to the result of creating a proxy for inputBody.
 	      if (!TransformStream) {
-	        TransformStream = require$$13.TransformStream;
+	        TransformStream = require$$14.TransformStream;
 	      }
 
 	      // https://streams.spec.whatwg.org/#readablestream-create-a-proxy
@@ -17143,7 +17152,7 @@ function requireFetch () {
 	const { Readable, pipeline } = require$$0$4;
 	const { addAbortListener, isErrored, isReadable, nodeMajor, nodeMinor } = requireUtil$6();
 	const { dataURLProcessor, serializeAMimeType } = requireDataURL();
-	const { TransformStream } = require$$13;
+	const { TransformStream } = require$$14;
 	const { getGlobalDispatcher } = requireGlobal();
 	const { webidl } = requireWebidl();
 	const { STATUS_CODES } = require$$2$1;
@@ -18813,7 +18822,7 @@ function requireFetch () {
 	  // cancelAlgorithm set to cancelAlgorithm, highWaterMark set to
 	  // highWaterMark, and sizeAlgorithm set to sizeAlgorithm.
 	  if (!ReadableStream) {
-	    ReadableStream = require$$13.ReadableStream;
+	    ReadableStream = require$$14.ReadableStream;
 	  }
 
 	  const stream = new ReadableStream(
@@ -25221,7 +25230,7 @@ function requireSummary () {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.summary = exports.markdownSummary = exports.SUMMARY_DOCS_URL = exports.SUMMARY_ENV_VAR = undefined;
 		const os_1 = require$$0;
-		const fs_1 = require$$1;
+		const fs_1 = fs;
 		const { access, appendFile, writeFile } = fs_1.promises;
 		exports.SUMMARY_ENV_VAR = 'GITHUB_STEP_SUMMARY';
 		exports.SUMMARY_DOCS_URL = 'https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary';
@@ -25527,7 +25536,7 @@ function requirePathUtils () {
 	};
 	Object.defineProperty(pathUtils, "__esModule", { value: true });
 	pathUtils.toPlatformPath = pathUtils.toWin32Path = pathUtils.toPosixPath = undefined;
-	const path = __importStar(require$$1$5);
+	const path$1 = __importStar(path);
 	/**
 	 * toPosixPath converts the given path to the posix form. On Windows, \\ will be
 	 * replaced with /.
@@ -25559,7 +25568,7 @@ function requirePathUtils () {
 	 * @return string The platform-specific path.
 	 */
 	function toPlatformPath(pth) {
-	    return pth.replace(/[/\\]/g, path.sep);
+	    return pth.replace(/[/\\]/g, path$1.sep);
 	}
 	pathUtils.toPlatformPath = toPlatformPath;
 	
@@ -25613,16 +25622,16 @@ function requireIoUtil () {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.getCmdPath = exports.tryGetExecutablePath = exports.isRooted = exports.isDirectory = exports.exists = exports.READONLY = exports.UV_FS_O_EXLOCK = exports.IS_WINDOWS = exports.unlink = exports.symlink = exports.stat = exports.rmdir = exports.rm = exports.rename = exports.readlink = exports.readdir = exports.open = exports.mkdir = exports.lstat = exports.copyFile = exports.chmod = undefined;
-		const fs = __importStar(require$$1);
-		const path = __importStar(require$$1$5);
-		_a = fs.promises
+		const fs$1 = __importStar(fs);
+		const path$1 = __importStar(path);
+		_a = fs$1.promises
 		// export const {open} = 'fs'
 		, exports.chmod = _a.chmod, exports.copyFile = _a.copyFile, exports.lstat = _a.lstat, exports.mkdir = _a.mkdir, exports.open = _a.open, exports.readdir = _a.readdir, exports.readlink = _a.readlink, exports.rename = _a.rename, exports.rm = _a.rm, exports.rmdir = _a.rmdir, exports.stat = _a.stat, exports.symlink = _a.symlink, exports.unlink = _a.unlink;
 		// export const {open} = 'fs'
 		exports.IS_WINDOWS = process.platform === 'win32';
 		// See https://github.com/nodejs/node/blob/d0153aee367422d0858105abec186da4dff0a0c5/deps/uv/include/uv/win.h#L691
 		exports.UV_FS_O_EXLOCK = 0x10000000;
-		exports.READONLY = fs.constants.O_RDONLY;
+		exports.READONLY = fs$1.constants.O_RDONLY;
 		function exists(fsPath) {
 		    return __awaiter(this, undefined, undefined, function* () {
 		        try {
@@ -25683,7 +25692,7 @@ function requireIoUtil () {
 		        if (stats && stats.isFile()) {
 		            if (exports.IS_WINDOWS) {
 		                // on Windows, test for valid extension
-		                const upperExt = path.extname(filePath).toUpperCase();
+		                const upperExt = path$1.extname(filePath).toUpperCase();
 		                if (extensions.some(validExt => validExt.toUpperCase() === upperExt)) {
 		                    return filePath;
 		                }
@@ -25712,11 +25721,11 @@ function requireIoUtil () {
 		                if (exports.IS_WINDOWS) {
 		                    // preserve the case of the actual file (since an extension was appended)
 		                    try {
-		                        const directory = path.dirname(filePath);
-		                        const upperName = path.basename(filePath).toUpperCase();
+		                        const directory = path$1.dirname(filePath);
+		                        const upperName = path$1.basename(filePath).toUpperCase();
 		                        for (const actualName of yield exports.readdir(directory)) {
 		                            if (upperName === actualName.toUpperCase()) {
-		                                filePath = path.join(directory, actualName);
+		                                filePath = path$1.join(directory, actualName);
 		                                break;
 		                            }
 		                        }
@@ -25804,7 +25813,7 @@ function requireIo () {
 	Object.defineProperty(io, "__esModule", { value: true });
 	io.findInPath = io.which = io.mkdirP = io.rmRF = io.mv = io.cp = undefined;
 	const assert_1 = require$$0$3;
-	const path = __importStar(require$$1$5);
+	const path$1 = __importStar(path);
 	const ioUtil = __importStar(requireIoUtil());
 	/**
 	 * Copies a file or folder.
@@ -25824,7 +25833,7 @@ function requireIo () {
 	        }
 	        // If dest is an existing directory, should copy inside.
 	        const newDest = destStat && destStat.isDirectory() && copySourceDirectory
-	            ? path.join(dest, path.basename(source))
+	            ? path$1.join(dest, path$1.basename(source))
 	            : dest;
 	        if (!(yield ioUtil.exists(source))) {
 	            throw new Error(`no such file or directory: ${source}`);
@@ -25839,7 +25848,7 @@ function requireIo () {
 	            }
 	        }
 	        else {
-	            if (path.relative(source, newDest) === '') {
+	            if (path$1.relative(source, newDest) === '') {
 	                // a file cannot be copied to itself
 	                throw new Error(`'${newDest}' and '${source}' are the same file`);
 	            }
@@ -25861,7 +25870,7 @@ function requireIo () {
 	            let destExists = true;
 	            if (yield ioUtil.isDirectory(dest)) {
 	                // If dest is directory copy src into dest
-	                dest = path.join(dest, path.basename(source));
+	                dest = path$1.join(dest, path$1.basename(source));
 	                destExists = yield ioUtil.exists(dest);
 	            }
 	            if (destExists) {
@@ -25873,7 +25882,7 @@ function requireIo () {
 	                }
 	            }
 	        }
-	        yield mkdirP(path.dirname(dest));
+	        yield mkdirP(path$1.dirname(dest));
 	        yield ioUtil.rename(source, dest);
 	    });
 	}
@@ -25968,7 +25977,7 @@ function requireIo () {
 	        // build the list of extensions to try
 	        const extensions = [];
 	        if (ioUtil.IS_WINDOWS && process.env['PATHEXT']) {
-	            for (const extension of process.env['PATHEXT'].split(path.delimiter)) {
+	            for (const extension of process.env['PATHEXT'].split(path$1.delimiter)) {
 	                if (extension) {
 	                    extensions.push(extension);
 	                }
@@ -25983,7 +25992,7 @@ function requireIo () {
 	            return [];
 	        }
 	        // if any path separators, return empty
-	        if (tool.includes(path.sep)) {
+	        if (tool.includes(path$1.sep)) {
 	            return [];
 	        }
 	        // build the list of directories
@@ -25994,7 +26003,7 @@ function requireIo () {
 	        // across platforms.
 	        const directories = [];
 	        if (process.env.PATH) {
-	            for (const p of process.env.PATH.split(path.delimiter)) {
+	            for (const p of process.env.PATH.split(path$1.delimiter)) {
 	                if (p) {
 	                    directories.push(p);
 	                }
@@ -26003,7 +26012,7 @@ function requireIo () {
 	        // find all matches
 	        const matches = [];
 	        for (const directory of directories) {
-	            const filePath = yield ioUtil.tryGetExecutablePath(path.join(directory, tool), extensions);
+	            const filePath = yield ioUtil.tryGetExecutablePath(path$1.join(directory, tool), extensions);
 	            if (filePath) {
 	                matches.push(filePath);
 	            }
@@ -26112,7 +26121,7 @@ function requireToolrunner () {
 	const os = __importStar(require$$0);
 	const events = __importStar(require$$4$1);
 	const child = __importStar(require$$2$3);
-	const path = __importStar(require$$1$5);
+	const path$1 = __importStar(path);
 	const io = __importStar(requireIo());
 	const ioUtil = __importStar(requireIoUtil());
 	const timers_1 = require$$6$1;
@@ -26467,7 +26476,7 @@ function requireToolrunner () {
 	                (this.toolPath.includes('/') ||
 	                    (IS_WINDOWS && this.toolPath.includes('\\')))) {
 	                // prefer options.cwd if it is specified, however options.cwd may also need to be rooted
-	                this.toolPath = path.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
+	                this.toolPath = path$1.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
 	            }
 	            // if the tool is only a file name, then resolve it from the PATH
 	            // otherwise verify it exists (add extension on Windows if necessary)
@@ -26956,7 +26965,7 @@ function requireCore () {
 		const file_command_1 = requireFileCommand();
 		const utils_1 = requireUtils$3();
 		const os = __importStar(require$$0);
-		const path = __importStar(require$$1$5);
+		const path$1 = __importStar(path);
 		const oidc_utils_1 = requireOidcUtils();
 		/**
 		 * The code to exit an action
@@ -27011,7 +27020,7 @@ function requireCore () {
 		    else {
 		        (0, command_1.issueCommand)('add-path', {}, inputPath);
 		    }
-		    process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
+		    process.env['PATH'] = `${inputPath}${path$1.delimiter}${process.env['PATH']}`;
 		}
 		exports.addPath = addPath;
 		/**
@@ -27278,7 +27287,7 @@ function requireContext () {
 	hasRequiredContext = 1;
 	Object.defineProperty(context, "__esModule", { value: true });
 	context.Context = undefined;
-	const fs_1 = require$$1;
+	const fs_1 = fs;
 	const os_1 = require$$0;
 	class Context {
 	    /**
@@ -31355,7 +31364,7 @@ class DateTime {
      * Since the ISO string provide by github is like 2025-01-15T11:04:32Z
      */
     #normalizeISOString(isoDateString) {
-        return isoDateString.replace(/\.000Z$/, 'Z');
+        return isoDateString.replace(/\.\d{1,3}Z$/, 'Z');
     }
 }
 
@@ -31399,37 +31408,38 @@ class StartTime extends DateTime {
  */
 var WorkflowJobStepStatus;
 (function (WorkflowJobStepStatus) {
-    WorkflowJobStepStatus[WorkflowJobStepStatus["queue"] = 0] = "queue";
-    WorkflowJobStepStatus[WorkflowJobStepStatus["in_progress"] = 1] = "in_progress";
-    WorkflowJobStepStatus[WorkflowJobStepStatus["completed"] = 2] = "completed";
+    WorkflowJobStepStatus["queue"] = "queue";
+    WorkflowJobStepStatus["in_progress"] = "in_progress";
+    WorkflowJobStepStatus["completed"] = "completed";
+    WorkflowJobStepStatus["pending"] = "pending";
 })(WorkflowJobStepStatus || (WorkflowJobStepStatus = {}));
 var WorkflowJobStepConclusion;
 (function (WorkflowJobStepConclusion) {
-    WorkflowJobStepConclusion[WorkflowJobStepConclusion["failure"] = 0] = "failure";
-    WorkflowJobStepConclusion[WorkflowJobStepConclusion["skipped"] = 1] = "skipped";
-    WorkflowJobStepConclusion[WorkflowJobStepConclusion["success"] = 2] = "success";
-    WorkflowJobStepConclusion[WorkflowJobStepConclusion["cancelled"] = 3] = "cancelled";
-    WorkflowJobStepConclusion[WorkflowJobStepConclusion["unknown"] = 4] = "unknown";
+    WorkflowJobStepConclusion["failure"] = "failure";
+    WorkflowJobStepConclusion["skipped"] = "skipped";
+    WorkflowJobStepConclusion["success"] = "success";
+    WorkflowJobStepConclusion["cancelled"] = "cancelled";
+    WorkflowJobStepConclusion["unknown"] = "unknown";
 })(WorkflowJobStepConclusion || (WorkflowJobStepConclusion = {}));
 var WorkflowJobStatus;
 (function (WorkflowJobStatus) {
-    WorkflowJobStatus[WorkflowJobStatus["queued"] = 0] = "queued";
-    WorkflowJobStatus[WorkflowJobStatus["in_progress"] = 1] = "in_progress";
-    WorkflowJobStatus[WorkflowJobStatus["completed"] = 2] = "completed";
-    WorkflowJobStatus[WorkflowJobStatus["waiting"] = 3] = "waiting";
-    WorkflowJobStatus[WorkflowJobStatus["requested"] = 4] = "requested";
-    WorkflowJobStatus[WorkflowJobStatus["pending"] = 5] = "pending";
+    WorkflowJobStatus["queued"] = "queued";
+    WorkflowJobStatus["in_progress"] = "in_progress";
+    WorkflowJobStatus["completed"] = "completed";
+    WorkflowJobStatus["waiting"] = "waiting";
+    WorkflowJobStatus["requested"] = "requested";
+    WorkflowJobStatus["pending"] = "pending";
 })(WorkflowJobStatus || (WorkflowJobStatus = {}));
 var WorkflowJobConclusion;
 (function (WorkflowJobConclusion) {
-    WorkflowJobConclusion[WorkflowJobConclusion["success"] = 0] = "success";
-    WorkflowJobConclusion[WorkflowJobConclusion["failure"] = 1] = "failure";
-    WorkflowJobConclusion[WorkflowJobConclusion["neutral"] = 2] = "neutral";
-    WorkflowJobConclusion[WorkflowJobConclusion["cancelled"] = 3] = "cancelled";
-    WorkflowJobConclusion[WorkflowJobConclusion["skipped"] = 4] = "skipped";
-    WorkflowJobConclusion[WorkflowJobConclusion["timed_out"] = 5] = "timed_out";
-    WorkflowJobConclusion[WorkflowJobConclusion["action_required"] = 6] = "action_required";
-    WorkflowJobConclusion[WorkflowJobConclusion["unknown"] = 7] = "unknown";
+    WorkflowJobConclusion["success"] = "success";
+    WorkflowJobConclusion["failure"] = "failure";
+    WorkflowJobConclusion["neutral"] = "neutral";
+    WorkflowJobConclusion["cancelled"] = "cancelled";
+    WorkflowJobConclusion["skipped"] = "skipped";
+    WorkflowJobConclusion["timed_out"] = "timed_out";
+    WorkflowJobConclusion["action_required"] = "action_required";
+    WorkflowJobConclusion["unknown"] = "unknown";
 })(WorkflowJobConclusion || (WorkflowJobConclusion = {}));
 
 class StepStatus {
@@ -31449,16 +31459,44 @@ class StepStatus {
     }
 }
 
+/**
+ * Info: (20250116 - Murky)
+ * Tag that provide by [Mermaid Gnatt Syntax](https://mermaid.js.org/syntax/gantt.html)
+ * @prop [empty] - This tag is not provided by Mermaid, must be transform into empty string
+ */
+var GanttChartTaskTag;
+(function (GanttChartTaskTag) {
+    GanttChartTaskTag["active"] = "active";
+    GanttChartTaskTag["done"] = "done";
+    GanttChartTaskTag["crit"] = "crit";
+    GanttChartTaskTag["milestone"] = "milestone";
+    /**
+     * Info: (20250116 - Murky)
+     * This tag is not provided by Mermaid, must be transform into empty string
+     */
+    GanttChartTaskTag["empty"] = "empty";
+})(GanttChartTaskTag || (GanttChartTaskTag = {}));
+
 class StepConclusion {
+    /**
+     * Custom mapping between with Gantt tag
+     */
+    static #conclusionGanttTagMapping = {
+        [WorkflowJobStepConclusion.success]: GanttChartTaskTag.empty, // dark blue
+        [WorkflowJobStepConclusion.failure]: GanttChartTaskTag.crit, // red
+        [WorkflowJobStepConclusion.skipped]: GanttChartTaskTag.done, // grey
+        [WorkflowJobStepConclusion.cancelled]: GanttChartTaskTag.done, // grey
+        [WorkflowJobStepConclusion.unknown]: GanttChartTaskTag.done // grey
+    };
     conclusion;
     constructor(conclusion) {
-        this.conclusion = this.#initConclusion(conclusion);
+        this.conclusion = StepConclusion.#initConclusion(conclusion);
     }
-    #initConclusion(conclusion) {
+    static #initConclusion(conclusion) {
         if (!conclusion) {
             return WorkflowJobStepConclusion.unknown;
         }
-        if (!this.#isWorkflowJobStepConclusion(conclusion)) {
+        if (!StepConclusion.#isWorkflowJobStepConclusion(conclusion)) {
             throw new Error(`Conclusion must within ${Object.values(WorkflowJobStepConclusion).join(' | ')}`);
         }
         return conclusion;
@@ -31467,9 +31505,12 @@ class StepConclusion {
      * Info: (20250114 - Murky)
      * Type guard of isWorkflowJobStepConclusion
      */
-    #isWorkflowJobStepConclusion(conclusion) {
+    static #isWorkflowJobStepConclusion(conclusion) {
         const isConclusion = Object.values(WorkflowJobStepConclusion).includes(conclusion);
         return isConclusion;
+    }
+    get ganttTag() {
+        return StepConclusion.#conclusionGanttTagMapping[this.conclusion];
     }
 }
 
@@ -31529,6 +31570,13 @@ class WorkflowJobStep {
      */
     isCompleted() {
         return !!this.completedAt;
+    }
+    /**
+     * Info: (20250117 - Murky)
+     * Get gantt tag base on conclusion
+     */
+    get ganttTag() {
+        return this.conclusion.ganttTag;
     }
 }
 
@@ -31710,40 +31758,88 @@ class WorkflowJob {
      * The name of the current branch. If null will be assign as ''
      */
     headBranch;
-    constructor(job) {
-        this.id = job.id;
-        this.run = new JobRun({
+    constructor(args) {
+        this.id = args.id;
+        this.run = args.run;
+        this.nodeId = args.nodeId;
+        this.headSha = args.headSha;
+        this.url = args.url;
+        this.htmlUrl = args.htmlUrl;
+        this.status = args.status;
+        this.conclusion = args.conclusion;
+        this.createdAt = args.createdAt;
+        this.startedAt = args.startedAt;
+        this.completedAt = args.completedAt;
+        this.name = args.name;
+        this.steps = args.steps;
+        this.checkRunUrl = args.checkRunUrl;
+        this.labels = args.labels;
+        this.runnerId = args.runnerId;
+        this.runnerName = args.runnerName;
+        this.runnerGroupId = args.runnerGroupId;
+        this.runnerGroupName = args.runnerGroupName;
+        this.workflowName = args.workflowName;
+        this.headBranch = args.headBranch;
+    }
+    /**
+     * Info: (20250117 - Murky)
+     * Transform data from github octokit to WorkflowJob
+     */
+    static fromGithub(job) {
+        const id = job.id;
+        const run = new JobRun({
             id: job.run_id,
             url: job.run_url,
             attempt: job.run_attempt
         });
-        this.nodeId = job.node_id;
-        this.headSha = job.head_sha;
-        this.url = job.url;
-        this.htmlUrl = job.html_url ?? '';
-        this.status = new JobStatus(job.status);
-        this.conclusion = new JobConclusion(job.conclusion);
-        this.createdAt = CreateTime.fromISOString(job.created_at);
-        this.startedAt = job.started_at
+        const nodeId = job.node_id;
+        const headSha = job.head_sha;
+        const url = job.url;
+        const htmlUrl = job.html_url ?? '';
+        const status = new JobStatus(job.status);
+        const conclusion = new JobConclusion(job.conclusion);
+        const createdAt = CreateTime.fromISOString(job.created_at);
+        const startedAt = job.started_at
             ? StartTime.fromISOString(job.started_at)
             : null;
-        this.completedAt = job.completed_at
+        const completedAt = job.completed_at
             ? CompleteTime.fromISOString(job.completed_at)
             : null;
-        this.name = job.name;
-        // Initialize steps as WorkflowJobStep instances
-        console.log(job?.steps);
-        this.steps = job?.steps
+        const name = job.name;
+        const steps = job?.steps
             ? job?.steps.map((step) => new WorkflowJobStep(step))
             : [];
-        this.checkRunUrl = job.check_run_url;
-        this.labels = job.labels;
-        this.runnerId = job.runner_id || 0;
-        this.runnerName = job.runner_name || '';
-        this.runnerGroupId = job.runner_group_id || 0;
-        this.runnerGroupName = job.runner_group_name || '';
-        this.workflowName = job.workflow_name || '';
-        this.headBranch = job.head_branch || '';
+        const checkRunUrl = job.check_run_url;
+        const labels = job.labels;
+        const runnerId = job.runner_id || 0;
+        const runnerName = job.runner_name || '';
+        const runnerGroupId = job.runner_group_id || 0;
+        const runnerGroupName = job.runner_group_name || '';
+        const workflowName = job.workflow_name || '';
+        const headBranch = job.head_branch || '';
+        return new WorkflowJob({
+            id,
+            run,
+            nodeId,
+            headSha,
+            url,
+            htmlUrl,
+            status,
+            conclusion,
+            createdAt,
+            startedAt,
+            completedAt,
+            name,
+            steps,
+            checkRunUrl,
+            labels,
+            runnerId,
+            runnerName,
+            runnerGroupId,
+            runnerGroupName,
+            workflowName,
+            headBranch
+        });
     }
     /**
      * Check if the job has started.
@@ -31756,6 +31852,32 @@ class WorkflowJob {
      */
     isCompleted() {
         return !!this.completedAt;
+    }
+    filterStepWithBothStartAtAndCompleteAt() {
+        const filteredSteps = this.steps.filter((step) => step.isStarted() && step.isCompleted());
+        return new WorkflowJob({
+            id: this.id,
+            run: this.run,
+            nodeId: this.nodeId,
+            headSha: this.headSha,
+            url: this.url,
+            htmlUrl: this.htmlUrl,
+            status: this.status,
+            conclusion: this.conclusion,
+            createdAt: this.createdAt,
+            startedAt: this.startedAt,
+            completedAt: this.completedAt,
+            name: this.name,
+            steps: filteredSteps,
+            checkRunUrl: this.checkRunUrl,
+            labels: this.labels,
+            runnerId: this.runnerId,
+            runnerName: this.runnerName,
+            runnerGroupId: this.runnerGroupId,
+            runnerGroupName: this.runnerGroupName,
+            workflowName: this.workflowName,
+            headBranch: this.headBranch
+        });
     }
 }
 
@@ -31801,7 +31923,7 @@ class ListWorkflowJobs {
                 break;
             }
             for (const job of jobs) {
-                const workflowJob = new WorkflowJob(job);
+                const workflowJob = WorkflowJob.fromGithub(job);
                 workflowJobs.push(workflowJob);
             }
             /**
@@ -31813,6 +31935,458 @@ class ListWorkflowJobs {
             }
         }
         return workflowJobs;
+    }
+}
+
+class FileSystem {
+    static CONFIG = {
+        ROOT_FOLDER: path.join(fileURLToPath(import.meta.url), '../../../'),
+        OUTPUT_FOLDER: 'output'
+    };
+    static get rootFolder() {
+        return this.CONFIG.ROOT_FOLDER;
+    }
+    static get outputFolder() {
+        return path.join(this.rootFolder, this.CONFIG.OUTPUT_FOLDER);
+    }
+    /**
+     * Make sure folder path exist, create new folder if not exist
+     * @param folderPath the folder need to be check if existed
+     */
+    static ensureFolderExists(folderPath) {
+        try {
+            if (!fs.existsSync(folderPath)) {
+                fs.mkdirSync(folderPath, { recursive: true });
+                Logger.info(`Folder created: ${folderPath}`);
+            }
+            else {
+                Logger.info(`Folder already exists: ${folderPath}`);
+            }
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error(`Failed to ensure folder exists: ${folderPath}, error is below:`);
+            Logger.error(error);
+            throw error;
+        }
+    }
+    static initOutputFolder() {
+        this.ensureFolderExists(this.outputFolder);
+    }
+    /**
+     * join file name after outputFolder
+     * @param fileName the fileName that will be joint after output folder
+     * @returns full outputFolder plus fileName
+     */
+    static getOutputFilePath(fileName) {
+        return path.join(this.outputFolder, fileName);
+    }
+    /**
+     * create or used existed
+     * @param folderName custom folder inside root
+     */
+    static initCustomFolder(folderName) {
+        const customFolderPath = path.join(this.rootFolder, folderName);
+        this.ensureFolderExists(customFolderPath);
+    }
+    /**
+     * @param filePath it need to be full path, not only filename
+     * @param data string that will be store in the [filePath]
+     */
+    static writeFileSync(filePath, data) {
+        fs.writeFileSync(filePath, data);
+    }
+    /**
+     * Write to output folder and te fileName is [filename]
+     * @param filePath only fileName, it wil be join with output path
+     * @param data string that will be store in the [filePath]
+     */
+    static writeToOutputFolder(fileName, data) {
+        const outputPath = FileSystem.getOutputFilePath(fileName);
+        FileSystem.writeFileSync(outputPath, data);
+        return outputPath;
+    }
+}
+
+/**
+ * Info: (20250117 - Murky)
+ * active is light blue
+ * done is gray
+ * crit is red
+ * milestone is diamond shape
+ */
+class GanttTaskTag {
+    static #tagToStringMap = {
+        [GanttChartTaskTag.active]: 'active,',
+        [GanttChartTaskTag.done]: 'done,',
+        [GanttChartTaskTag.crit]: 'crit,',
+        [GanttChartTaskTag.milestone]: 'milestone,',
+        [GanttChartTaskTag.empty]: ''
+    };
+    tag;
+    constructor(tag) {
+        this.#assertIsGanttChartTaskTab(tag);
+        this.tag = tag;
+    }
+    static fromString(tag) {
+        return new GanttTaskTag(tag);
+    }
+    static active() {
+        return new GanttTaskTag(GanttChartTaskTag.active);
+    }
+    static done() {
+        return new GanttTaskTag(GanttChartTaskTag.done);
+    }
+    static crit() {
+        return new GanttTaskTag(GanttChartTaskTag.crit);
+    }
+    static milestone() {
+        return new GanttTaskTag(GanttChartTaskTag.milestone);
+    }
+    static empty() {
+        return new GanttTaskTag(GanttChartTaskTag.empty);
+    }
+    toString() {
+        return GanttTaskTag.#tagToStringMap[this.tag];
+    }
+    /**
+     * Convert unknown to GanttChartTaskTab
+     * Throw Error if not in enum
+     */
+    #assertIsGanttChartTaskTab(tag) {
+        if (!Object.values(GanttChartTaskTag).includes(tag)) {
+            throw new Error(`Status is not GanttChartTaskTag, input tag: ${tag}`);
+        }
+    }
+}
+
+var _a;
+class GanttTask {
+    static #MILESTONE_KEYWORDS = ['Set up job', 'Complete job'];
+    name;
+    /**
+     * Info: (20250116 - Murky)
+     * Tag is defined by [Mermaid Gnatt Syntax](https://mermaid.js.org/syntax/gantt.html),
+     * One task can have multiple tag
+     * @example
+     * Set up job : milestone, active, 1658073446000, 1658073450000
+     */
+    tags;
+    startedAt;
+    completedAt;
+    constructor(args) {
+        const { name, tags, startedAt, completedAt } = args;
+        if (!name) {
+            throw new Error('GanttTask must provide name that length is larger than 0');
+        }
+        this.name = name;
+        this.tags = tags ? tags : [];
+        // Info: (20250116 - Murky) all param in startedAt is readonly,
+        // so it is safe to not init new one
+        this.startedAt = startedAt;
+        // Info: (20250116 - Murky) all param in completedAt is readonly,
+        // so it is safe to not init new one
+        this.completedAt = completedAt;
+        this.#addMilestoneTagIfApplicable();
+    }
+    pushTag(tag) {
+        const copyTag = new GanttTaskTag(tag.tag);
+        this.tags.push(copyTag);
+    }
+    addActiveTag() {
+        return this.pushTag(GanttTaskTag.active());
+    }
+    addDoneTag() {
+        return this.pushTag(GanttTaskTag.done());
+    }
+    addCritTag() {
+        return this.pushTag(GanttTaskTag.crit());
+    }
+    addMilestoneTag() {
+        return this.pushTag(GanttTaskTag.milestone());
+    }
+    addEmptyTag() {
+        return this.pushTag(GanttTaskTag.empty());
+    }
+    toString() {
+        const tagsSyntax = Array.from(new Set(this.tags.map((tag) => tag.toString()))).join(' ');
+        const startedAtTimestamp = Math.min(this.startedAt.timestamp, this.completedAt.timestamp);
+        const ganttTaskSyntax = '    ' +
+            this.name +
+            ' :' +
+            tagsSyntax +
+            ' ' +
+            startedAtTimestamp +
+            ', ' +
+            this.completedAt.timestamp;
+        return ganttTaskSyntax;
+    }
+    #addMilestoneTagIfApplicable() {
+        if (this.#isMilestoneTask() && !this.#isMilestoneTagExist()) {
+            this.addMilestoneTag();
+        }
+    }
+    #isMilestoneTask() {
+        return _a.#MILESTONE_KEYWORDS.some((keyword) => this.name.includes(keyword));
+    }
+    #isMilestoneTagExist() {
+        return this.tags.some((tag) => tag.tag === GanttChartTaskTag.milestone);
+    }
+}
+_a = GanttTask;
+
+/**
+ * Info: (20250117 - Murky)
+ *
+ * In [Mermaid Gantt Syntax](https://mermaid.js.org/syntax/gantt.html)
+ * One Section have multiple task
+ * and one task can have multiple tag
+ *
+ * @example
+ * section Critical tasks
+ * Set up job                          :milestone, 1658073446000, 1658073450000
+ * Completed task in the critical line :crit, done, 1658073451000, 1658073453000
+ * Implement parser and json           :done, 1658073453000after, 1658073458000
+ * Create tests for parser             :1658073459000, 1658073654000
+ */
+class GanttSection {
+    name;
+    tasks;
+    constructor(args) {
+        const { name, tasks } = args;
+        if (!name) {
+            throw new Error('GanttSection must provide name that length is larger than 0');
+        }
+        this.name = name;
+        if (tasks && tasks.length > 0) {
+            this.tasks = tasks;
+        }
+        else {
+            this.tasks = [];
+        }
+    }
+    /**
+     * Add a pre-existing GanttTask instance to the section.
+     */
+    pushTask(task) {
+        const newTask = new GanttTask({
+            name: task.name,
+            startedAt: task.startedAt,
+            completedAt: task.completedAt,
+            tags: task.tags
+        });
+        this.tasks.push(newTask);
+    }
+    /**
+     * Create and add a new task directly to the section.
+     */
+    addTask(args) {
+        const task = new GanttTask(args);
+        this.tasks.push(task);
+    }
+    toString() {
+        const sectionTitleSyntax = '    section ' + this.name + '\n';
+        const tagsSyntax = this.tasks.map((task) => task.toString()).join('\n');
+        const sectionSyntax = sectionTitleSyntax + tagsSyntax;
+        return sectionSyntax;
+    }
+}
+
+class GanttChart {
+    static #DATE_FORMAT = 'x'; // Info: (20250117 - Murky) Timestamp
+    static #AXIS_FORMAT = '%H:%M:%S';
+    title;
+    sections;
+    constructor(args) {
+        const { title, sections } = args;
+        if (!title) {
+            throw new Error("GanttChart's title need to be larger than 0");
+        }
+        this.title = title;
+        this.sections = sections ? sections : [];
+    }
+    /**
+     * Create and add a new task directly to the section.
+     */
+    pushSection(section) {
+        this.sections.push(section);
+    }
+    /**
+     * Create and add a new section directly to the chart.
+     */
+    addSection(args) {
+        const newSection = new GanttSection(args);
+        this.sections.push(newSection);
+    }
+    /**
+     * Add a pre-existing GanttTask instance to the last section in ganttChart.
+     */
+    pushTaskToLastSection(task) {
+        if (!this.sections.length) {
+            throw new Error('When push task to last section of ganttChart, it must has at least one section in chart');
+        }
+        const lastSection = this.sections[this.sections.length - 1];
+        lastSection.pushTask(task);
+    }
+    /**
+     * Create and add a new task directly to the last section in ganttChart.
+     */
+    addTaskToLastSection(args) {
+        if (!this.sections.length) {
+            throw new Error('When add task to last section of ganttChart, it must has at least one section in chart');
+        }
+        const lastSection = this.sections[this.sections.length - 1];
+        lastSection.addTask(args);
+    }
+    toMermaidSyntax() {
+        const title = '    title ' + this.title + '\n';
+        const dateFormat = '    dateFormat ' + GanttChart.#DATE_FORMAT + '\n';
+        const axisFormat = '    axisFormat ' + GanttChart.#AXIS_FORMAT + '\n';
+        const sectionSyntax = this.sections
+            .map((section) => section.toString())
+            .join('\n\n'); // need extra \n to make empty line
+        const ganttSyntax = 'gantt\n' + title + dateFormat + axisFormat + sectionSyntax;
+        return ganttSyntax;
+    }
+}
+
+class MermaidExporter {
+    static mermaidConfig = {
+        parseMMDOptions: {
+            backgroundColor: 'white',
+            mermaidConfig: {
+                theme: 'default',
+                gantt: {
+                    leftPadding: 150,
+                    barGap: 10,
+                    topPadding: 50,
+                    rightPadding: 50
+                }
+            }
+        }
+    };
+    static async exportToImage(args) {
+        const { mermaidMMDFilePath, outputPath } = args;
+        // Info: (20250117 - Murky) Force to use svg end
+        const outputPathExt = path.extname(outputPath);
+        if (outputPathExt) {
+            outputPath.split('.').slice(0, -1).join('.');
+        }
+        // Info: (20250117 - Murky) this is async function
+        run$1(mermaidMMDFilePath, `${outputPath}.svg`, MermaidExporter.mermaidConfig);
+    }
+}
+
+class JobGanttChartDrawer {
+    #jobs;
+    #githubContext;
+    constructor(args) {
+        const { jobs, githubContext } = args;
+        if (!jobs || jobs.length <= 0) {
+            throw new Error('To draw Gantt by using JobGanttChartDrawer, At least one job need to be provided.');
+        }
+        this.#jobs = jobs;
+        this.#githubContext = githubContext;
+    }
+    /**
+     * Info: (20250117 - Murky)
+     * Return jobs that all steps in jobs has startAt and completedAt
+     */
+    #filterJobWithValidStep() {
+        const filteredJobs = this.#jobs.map((job) => job.filterStepWithBothStartAtAndCompleteAt());
+        return filteredJobs;
+    }
+    #generateTitle() {
+        const { repo, runId, actor } = this.#githubContext;
+        const title = `Repo: ${repo.repo} - RunId: ${runId} - Actor: ${actor}`;
+        return title;
+    }
+    /**
+     * Filled GanttChart By jobs as section and steps as task
+     */
+    #populateGanttChartWithJobs(args) {
+        const { ganttChart, jobs } = args;
+        for (const job of jobs) {
+            ganttChart.addSection({ name: job.name });
+            for (const step of job.steps) {
+                const ganttTaskTag = new GanttTaskTag(step.ganttTag);
+                if (!step.startedAt || !step.completedAt) {
+                    throw new Error('All step pass to ganttChart must have startedAt and completeAt');
+                }
+                ganttChart.addTaskToLastSection({
+                    name: step.name,
+                    startedAt: step.startedAt,
+                    completedAt: step.completedAt,
+                    tags: [ganttTaskTag]
+                });
+            }
+        }
+    }
+    /**
+     * Mermaid Cli need to write syntax to local mmd file first,
+     * please make sure output folder exist by FileSystem.initOutputFolder()
+     */
+    #writeMermaidMMDFile(args) {
+        const { ganttChart, title } = args;
+        const ganttMermaidSyntax = ganttChart.toMermaidSyntax();
+        const ganttMMDFilePath = FileSystem.writeToOutputFolder(`${title}.mmd`, ganttMermaidSyntax);
+        return ganttMMDFilePath;
+    }
+    async drawAndSafeGanttChart() {
+        const filteredJobs = this.#filterJobWithValidStep();
+        const title = this.#generateTitle();
+        const ganttChart = new GanttChart({ title });
+        this.#populateGanttChartWithJobs({
+            ganttChart,
+            jobs: filteredJobs
+        });
+        // Info: (20250118 - Murky) Make sure output folder is in <rootDir>/output
+        FileSystem.initOutputFolder();
+        const ganttMMDFilePath = this.#writeMermaidMMDFile({
+            ganttChart,
+            title
+        });
+        const outputPath = FileSystem.getOutputFilePath(title);
+        await MermaidExporter.exportToImage({
+            mermaidMMDFilePath: ganttMMDFilePath,
+            outputPath
+        });
+    }
+}
+
+/**
+ * This class is designed to run the main process of generating Gantt charts
+ * from GitHub jobs.
+ * It is intended to be used exclusively in the main function.
+ */
+class MainJobsToGanttRunner {
+    #octokit;
+    #githubContext;
+    constructor(args) {
+        this.#octokit = args.octokit;
+        this.#githubContext = args.githubContext;
+    }
+    async #fetchWorkflowJobs() {
+        const listWorkflowJobs = new ListWorkflowJobs({
+            octokit: this.#octokit,
+            githubContext: this.#githubContext
+        });
+        const workflowJobs = await listWorkflowJobs.fetchFromGithub();
+        Logger.debug(`WorkflowJobs fetch successfully, job length: ${workflowJobs.length}`);
+        return workflowJobs;
+    }
+    async #drawGanttChart(jobs) {
+        const jobGanttChartDrawer = new JobGanttChartDrawer({
+            jobs,
+            githubContext: this.#githubContext
+        });
+        await jobGanttChartDrawer.drawAndSafeGanttChart();
+        Logger.debug('Gantt Chart create successfully');
+    }
+    async run() {
+        const workflowJobs = await this.#fetchWorkflowJobs();
+        await this.#drawGanttChart(workflowJobs);
+        Logger.info('[Step]: Gantt Chart Generate completed');
     }
 }
 
@@ -31830,13 +32404,11 @@ async function run() {
         Logger.debug(new Date().toTimeString());
         const githubToken = coreExports.getInput('GITHUB_TOKEN');
         const octokit = OctokitManager.getInstance(githubToken);
-        const listWorkflowJobs = new ListWorkflowJobs({
+        const stepGanttChartGenerate = new MainJobsToGanttRunner({
             octokit,
             githubContext
         });
-        const workflowJobs = await listWorkflowJobs.fetchFromGithub();
-        Logger.debug(`workflowJobs ${JSON.stringify(workflowJobs)}`);
-        Logger.debug(new Date().toTimeString());
+        await stepGanttChartGenerate.run();
         // Set outputs for other workflow steps to use
         coreExports.setOutput('time', new Date().toTimeString());
     }
