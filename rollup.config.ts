@@ -9,16 +9,13 @@ const config = {
   input: 'src/index.ts',
   output: {
     esModule: true,
-    dir: 'dist',
     // file: 'dist/index.js',
+    dir: 'dist',
     format: 'es',
     sourcemap: true
   },
   plugins: [nodeResolve(), commonjs(), json(), typescript()]
-  // external: [
-  // '@mermaid-js/mermaid-cli'
-  // /node_modules/
-  // ]
+  // external: ['@mermaid-js/mermaid-cli']
 }
 
 export default config

@@ -1,3 +1,5 @@
+// import { run } from '../../../node_modules/@mermaid-js/mermaid-cli/src/index.js'
+// import type { run as runType } from '../../../node_modules/@mermaid-js/mermaid-cli/dist-types/src/cli.js'
 import { run } from '@mermaid-js/mermaid-cli'
 
 import path from 'path'

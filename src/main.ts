@@ -5,6 +5,7 @@ import OctokitManager from '@/utils/octokitManager.js'
 import Logger from '@/utils/logger.js'
 
 import MainJobsToGanttRunner from '@/steps/jobSummary/mainJobsToGanttRunner.js'
+
 /**
  * The main function for the action.
  *
