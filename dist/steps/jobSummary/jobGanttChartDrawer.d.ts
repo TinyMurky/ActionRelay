@@ -6,5 +6,5 @@ export default class JobGanttChartDrawer {
         jobs: Readonly<WorkflowJob[]>;
         githubContext: Readonly<Context>;
     }>);
-    drawAndSafeGanttChart(): Promise<void>;
+    generateGanttChartParagraph(): Promise<string>;
 }

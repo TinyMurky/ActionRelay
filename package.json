@@ -39,8 +39,7 @@
   "dependencies": {
     "@actions/core": "^1.11.1",
     "@actions/github": "^6.0.0",
-    "@actions/http-client": "^2.2.3",
-    "@mermaid-js/mermaid-cli": "^11.4.2"
+    "@actions/http-client": "^2.2.3"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.3",

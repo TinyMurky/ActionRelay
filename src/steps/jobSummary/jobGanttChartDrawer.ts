@@ -1,8 +1,10 @@
+import { githubContext } from '@/constants/github.js'
 import WorkflowJob from '@/steps/jobSummary/workflowJob.js'
 import FileSystem from '@/utils/fileSystem.js'
 import GanttChart from '@/utils/mermaid/gantt/ganttChart.js'
 import GanttTaskTag from '@/utils/mermaid/gantt/ganttTaskTag.js'
-import MermaidExporter from '@/utils/mermaid/mermaidExporter.js'
+import JobUrl from '@/utils/urls/jobUrl.js'
+import { PullRequestCommitUrl } from '@/utils/urls/pullRequestCommitUrl.js'
 import { Context } from '@actions/github/lib/context.js'
 
 export default class JobGanttChartDrawer {
@@ -25,6 +27,49 @@ export default class JobGanttChartDrawer {
 
     this.#jobs = jobs
     this.#githubContext = githubContext
+  }
+
+  public async generateGanttChartParagraph(): Promise<string> {
+    const filteredJobs = this.#filterJobWithValidStep()
+    const title = this.#generateTitle()
+
+    const ganttChart = new GanttChart({ title })
+
+    this.#populateGanttChartWithJobs({
+      ganttChart,
+      jobs: filteredJobs
+    })
+
+    const markdown = this.#generateMarkdown({
+      ganttChart,
+      title
+    })
+
+    const summarySyntax = this.#generateSummaryText()
+
+    return summarySyntax + markdown
+  }
+
+  /**
+   * Mermaid Cli need to write syntax to local mmd file first,
+   * please make sure output folder exist by FileSystem.initOutputFolder()
+   */
+  #generateMarkdown(
+    args: Readonly<{
+      ganttChart: GanttChart
+      title: string
+    }>
+  ): string {
+    const { ganttChart, title } = args
+
+    const ganttMermaidSyntax = ganttChart.toMermaidSyntax()
+
+    const ganttMMDFilePath = FileSystem.writeToOutputFolder(
+      `${title}.mmd`,
+      ganttMermaidSyntax
+    )
+
+    return ganttMMDFilePath
   }
 
   /**
@@ -79,52 +124,40 @@ export default class JobGanttChartDrawer {
     }
   }
 
-  /**
-   * Mermaid Cli need to write syntax to local mmd file first,
-   * please make sure output folder exist by FileSystem.initOutputFolder()
-   */
-  #writeMermaidMMDFile(
-    args: Readonly<{
-      ganttChart: GanttChart
-      title: string
-    }>
-  ): string {
-    const { ganttChart, title } = args
+  #generateSummaryText() {
+    const title = this.#generateHeader()
+    const commitMessage = this.#generateCommitMessage()
+    const jobDetails = this.#generateJobDetails()
 
-    const ganttMermaidSyntax = ganttChart.toMermaidSyntax()
-
-    const ganttMMDFilePath = FileSystem.writeToOutputFolder(
-      `${title}.mmd`,
-      ganttMermaidSyntax
-    )
-
-    return ganttMMDFilePath
+    return title + commitMessage + jobDetails
   }
 
-  public async drawAndSafeGanttChart() {
-    const filteredJobs = this.#filterJobWithValidStep()
-    const title = this.#generateTitle()
+  #generateHeader(): string {
+    return '# ActionRelay - Jobs and Steps Gantt Chart\n'
+  }
 
-    const ganttChart = new GanttChart({ title })
+  #generateCommitMessage(): string {
+    const pullRequestCommitUrl: PullRequestCommitUrl =
+      PullRequestCommitUrl.fromContext(this.#githubContext)
 
-    this.#populateGanttChartWithJobs({
-      ganttChart,
-      jobs: filteredJobs
-    })
+    return `Base on commit: [${pullRequestCommitUrl.commitId}](${pullRequestCommitUrl.url})\n\n`
+  }
 
-    // Info: (20250118 - Murky) Make sure output folder is in <rootDir>/output
-    FileSystem.initOutputFolder()
+  #generateJobDetails(): string {
+    const { owner, repo } = githubContext.repo
+    const jobUrls = this.#jobs.map((job) => ({
+      jobUrl: JobUrl.fromString({ jobId: job.id, owner, repo }),
+      jobName: job.name
+    }))
 
-    const ganttMMDFilePath = this.#writeMermaidMMDFile({
-      ganttChart,
-      title
-    })
+    const jobSummary = 'Jobs details below:\n'
+    const jobMessages = jobUrls
+      .map(
+        (jobUrl) =>
+          `- Job **${jobUrl.jobName}** details [here](${jobUrl.jobUrl})\n`
+      )
+      .join('')
 
-    const outputPath = FileSystem.getOutputFilePath(title)
-
-    await MermaidExporter.exportToImage({
-      mermaidMMDFilePath: ganttMMDFilePath,
-      outputPath
-    })
+    return jobSummary + jobMessages
   }
 }

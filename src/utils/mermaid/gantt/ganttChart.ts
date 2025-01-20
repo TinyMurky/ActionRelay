@@ -84,6 +84,8 @@ export default class GanttChart {
   }
 
   toMermaidSyntax() {
+    const upperMdx = '```mermaid\n'
+    const bottomMdx = '```'
     const title = '    title ' + this.title + '\n'
     const dateFormat = '    dateFormat ' + GanttChart.#DATE_FORMAT + '\n'
     const axisFormat = '    axisFormat ' + GanttChart.#AXIS_FORMAT + '\n'
@@ -92,7 +94,13 @@ export default class GanttChart {
       .join('\n\n') // need extra \n to make empty line
 
     const ganttSyntax =
-      'gantt\n' + title + dateFormat + axisFormat + sectionSyntax
+      upperMdx +
+      'gantt\n' +
+      title +
+      dateFormat +
+      axisFormat +
+      sectionSyntax +
+      bottomMdx
 
     return ganttSyntax
   }
