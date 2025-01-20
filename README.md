@@ -1,19 +1,24 @@
 # ActionRelay
 
-> [!link]
-> This Action Referencing following Github Action
+> [!link] This Action Referencing following Github Action
+>
 > - [Create a GitHub Action Using TypeScript](https://github.com/actions/typescript-action)
 
 ## Description
 
-- **Original Purpose**: ActionRelay originally want send Info to flutter App via middle relay server
-- **v0.0.1**: In `v0.0.1`, Action Relay can gather started and completed time of jobs and steps of pull request, and comment of Gantt Chart base on range between started and completed time.
+- **Original Purpose**: ActionRelay originally want send Info to flutter App via
+  middle relay server
+- **v0.0.1**: In `v0.0.1`, Action Relay can gather started and completed time of
+  jobs and steps of pull request, and comment of Gantt Chart base on range
+  between started and completed time.
 
 ## Inputs
 
 ### `GITHUB_TOKEN`
-please provide literally `${{ secrets.GITHUB_TOKEN }}` to this value, Github will recognized `${{ secrets.GITHUB_TOKEN }}`
- and generate unique token just for this run.
+
+please provide literally `${{ secrets.GITHUB_TOKEN }}` to this value, Github
+will recognized `${{ secrets.GITHUB_TOKEN }}` and generate unique token just for
+this run.
 
 ## Outputs
 
@@ -29,6 +34,8 @@ The time this action finished
 >   literally `${{ secrets.GITHUB_TOKEN }}`
 
 ```yaml
+permissions:
+  pull-requests: write
 jobs:
   your-job-name:
     name: Your  name job

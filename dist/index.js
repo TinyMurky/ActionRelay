@@ -1,11 +1,11 @@
 import require$$0 from 'os';
 import require$$0$1 from 'crypto';
-import fs from 'fs';
-import path from 'path';
+import require$$1 from 'fs';
+import require$$1$5 from 'path';
 import require$$2$1 from 'http';
 import require$$3$1 from 'https';
 import require$$0$5 from 'net';
-import require$$1 from 'tls';
+import require$$1$1 from 'tls';
 import require$$4$1 from 'events';
 import require$$0$3 from 'assert';
 import require$$0$2 from 'util';
@@ -14,14 +14,14 @@ import require$$7 from 'buffer';
 import require$$8 from 'querystring';
 import require$$14 from 'stream/web';
 import require$$0$7 from 'node:stream';
-import require$$1$1 from 'node:util';
+import require$$1$2 from 'node:util';
 import require$$0$6 from 'node:events';
 import require$$0$8 from 'worker_threads';
 import require$$2$2 from 'perf_hooks';
 import require$$5 from 'util/types';
 import require$$4$2 from 'async_hooks';
-import require$$1$2 from 'console';
-import require$$1$3, { fileURLToPath } from 'url';
+import require$$1$3 from 'console';
+import require$$1$4 from 'url';
 import require$$3$2 from 'zlib';
 import require$$6 from 'string_decoder';
 import require$$0$9 from 'diagnostics_channel';
@@ -251,7 +251,7 @@ function requireFileCommand () {
 	// We use any as a valid input type
 	/* eslint-disable @typescript-eslint/no-explicit-any */
 	const crypto = __importStar(require$$0$1);
-	const fs$1 = __importStar(fs);
+	const fs = __importStar(require$$1);
 	const os = __importStar(require$$0);
 	const utils_1 = requireUtils$3();
 	function issueFileCommand(command, message) {
@@ -259,10 +259,10 @@ function requireFileCommand () {
 	    if (!filePath) {
 	        throw new Error(`Unable to find environment variable for file command ${command}`);
 	    }
-	    if (!fs$1.existsSync(filePath)) {
+	    if (!fs.existsSync(filePath)) {
 	        throw new Error(`Missing file at path: ${filePath}`);
 	    }
-	    fs$1.appendFileSync(filePath, `${(0, utils_1.toCommandValue)(message)}${os.EOL}`, {
+	    fs.appendFileSync(filePath, `${(0, utils_1.toCommandValue)(message)}${os.EOL}`, {
 	        encoding: 'utf8'
 	    });
 	}
@@ -401,7 +401,7 @@ var hasRequiredTunnel$1;
 function requireTunnel$1 () {
 	if (hasRequiredTunnel$1) return tunnel$1;
 	hasRequiredTunnel$1 = 1;
-	var tls = require$$1;
+	var tls = require$$1$1;
 	var http = require$$2$1;
 	var https = require$$3$1;
 	var events = require$$4$1;
@@ -1783,7 +1783,7 @@ function requireSbmh () {
 	 * by Hongli Lai at: https://github.com/FooBarWidget/boyer-moore-horspool
 	 */
 	const EventEmitter = require$$0$6.EventEmitter;
-	const inherits = require$$1$1.inherits;
+	const inherits = require$$1$2.inherits;
 
 	function SBMH (needle) {
 	  if (typeof needle === 'string') {
@@ -1992,7 +1992,7 @@ function requirePartStream () {
 	if (hasRequiredPartStream) return PartStream_1;
 	hasRequiredPartStream = 1;
 
-	const inherits = require$$1$1.inherits;
+	const inherits = require$$1$2.inherits;
 	const ReadableStream = require$$0$7.Readable;
 
 	function PartStream (opts) {
@@ -2038,7 +2038,7 @@ function requireHeaderParser () {
 	hasRequiredHeaderParser = 1;
 
 	const EventEmitter = require$$0$6.EventEmitter;
-	const inherits = require$$1$1.inherits;
+	const inherits = require$$1$2.inherits;
 	const getLimit = requireGetLimit();
 
 	const StreamSearch = requireSbmh();
@@ -2146,7 +2146,7 @@ function requireDicer () {
 	hasRequiredDicer = 1;
 
 	const WritableStream = require$$0$7.Writable;
-	const inherits = require$$1$1.inherits;
+	const inherits = require$$1$2.inherits;
 
 	const StreamSearch = requireSbmh();
 
@@ -2723,7 +2723,7 @@ function requireMultipart () {
 	//     -- this will require modifications to utils.parseParams
 
 	const { Readable } = require$$0$7;
-	const { inherits } = require$$1$1;
+	const { inherits } = require$$1$2;
 
 	const Dicer = requireDicer();
 
@@ -3289,7 +3289,7 @@ function requireMain () {
 	hasRequiredMain = 1;
 
 	const WritableStream = require$$0$7.Writable;
-	const { inherits } = require$$1$1;
+	const { inherits } = require$$1$2;
 	const Dicer = requireDicer();
 
 	const MultipartParser = requireMultipart();
@@ -8113,7 +8113,7 @@ function requireConnect () {
 	    let socket;
 	    if (protocol === 'https:') {
 	      if (!tls) {
-	        tls = require$$1;
+	        tls = require$$1$1;
 	      }
 	      servername = servername || options.servername || util.getServerName(host) || null;
 
@@ -14123,7 +14123,7 @@ function requirePendingInterceptorsFormatter () {
 	hasRequiredPendingInterceptorsFormatter = 1;
 
 	const { Transform } = require$$0$4;
-	const { Console } = require$$1$2;
+	const { Console } = require$$1$3;
 
 	/**
 	 * Gets the output of `console.table(…)` as a string.
@@ -14350,7 +14350,7 @@ function requireProxyAgent () {
 	hasRequiredProxyAgent = 1;
 
 	const { kProxy, kClose, kDestroy, kInterceptors } = requireSymbols$4();
-	const { URL } = require$$1$3;
+	const { URL } = require$$1$4;
 	const Agent = requireAgent();
 	const Pool = requirePool();
 	const DispatcherBase = requireDispatcherBase();
@@ -25229,7 +25229,7 @@ function requireSummary () {
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.summary = exports.markdownSummary = exports.SUMMARY_DOCS_URL = exports.SUMMARY_ENV_VAR = undefined;
 		const os_1 = require$$0;
-		const fs_1 = fs;
+		const fs_1 = require$$1;
 		const { access, appendFile, writeFile } = fs_1.promises;
 		exports.SUMMARY_ENV_VAR = 'GITHUB_STEP_SUMMARY';
 		exports.SUMMARY_DOCS_URL = 'https://docs.github.com/actions/using-workflows/workflow-commands-for-github-actions#adding-a-job-summary';
@@ -25535,7 +25535,7 @@ function requirePathUtils () {
 	};
 	Object.defineProperty(pathUtils, "__esModule", { value: true });
 	pathUtils.toPlatformPath = pathUtils.toWin32Path = pathUtils.toPosixPath = undefined;
-	const path$1 = __importStar(path);
+	const path = __importStar(require$$1$5);
 	/**
 	 * toPosixPath converts the given path to the posix form. On Windows, \\ will be
 	 * replaced with /.
@@ -25567,7 +25567,7 @@ function requirePathUtils () {
 	 * @return string The platform-specific path.
 	 */
 	function toPlatformPath(pth) {
-	    return pth.replace(/[/\\]/g, path$1.sep);
+	    return pth.replace(/[/\\]/g, path.sep);
 	}
 	pathUtils.toPlatformPath = toPlatformPath;
 	
@@ -25621,16 +25621,16 @@ function requireIoUtil () {
 		var _a;
 		Object.defineProperty(exports, "__esModule", { value: true });
 		exports.getCmdPath = exports.tryGetExecutablePath = exports.isRooted = exports.isDirectory = exports.exists = exports.READONLY = exports.UV_FS_O_EXLOCK = exports.IS_WINDOWS = exports.unlink = exports.symlink = exports.stat = exports.rmdir = exports.rm = exports.rename = exports.readlink = exports.readdir = exports.open = exports.mkdir = exports.lstat = exports.copyFile = exports.chmod = undefined;
-		const fs$1 = __importStar(fs);
-		const path$1 = __importStar(path);
-		_a = fs$1.promises
+		const fs = __importStar(require$$1);
+		const path = __importStar(require$$1$5);
+		_a = fs.promises
 		// export const {open} = 'fs'
 		, exports.chmod = _a.chmod, exports.copyFile = _a.copyFile, exports.lstat = _a.lstat, exports.mkdir = _a.mkdir, exports.open = _a.open, exports.readdir = _a.readdir, exports.readlink = _a.readlink, exports.rename = _a.rename, exports.rm = _a.rm, exports.rmdir = _a.rmdir, exports.stat = _a.stat, exports.symlink = _a.symlink, exports.unlink = _a.unlink;
 		// export const {open} = 'fs'
 		exports.IS_WINDOWS = process.platform === 'win32';
 		// See https://github.com/nodejs/node/blob/d0153aee367422d0858105abec186da4dff0a0c5/deps/uv/include/uv/win.h#L691
 		exports.UV_FS_O_EXLOCK = 0x10000000;
-		exports.READONLY = fs$1.constants.O_RDONLY;
+		exports.READONLY = fs.constants.O_RDONLY;
 		function exists(fsPath) {
 		    return __awaiter(this, undefined, undefined, function* () {
 		        try {
@@ -25691,7 +25691,7 @@ function requireIoUtil () {
 		        if (stats && stats.isFile()) {
 		            if (exports.IS_WINDOWS) {
 		                // on Windows, test for valid extension
-		                const upperExt = path$1.extname(filePath).toUpperCase();
+		                const upperExt = path.extname(filePath).toUpperCase();
 		                if (extensions.some(validExt => validExt.toUpperCase() === upperExt)) {
 		                    return filePath;
 		                }
@@ -25720,11 +25720,11 @@ function requireIoUtil () {
 		                if (exports.IS_WINDOWS) {
 		                    // preserve the case of the actual file (since an extension was appended)
 		                    try {
-		                        const directory = path$1.dirname(filePath);
-		                        const upperName = path$1.basename(filePath).toUpperCase();
+		                        const directory = path.dirname(filePath);
+		                        const upperName = path.basename(filePath).toUpperCase();
 		                        for (const actualName of yield exports.readdir(directory)) {
 		                            if (upperName === actualName.toUpperCase()) {
-		                                filePath = path$1.join(directory, actualName);
+		                                filePath = path.join(directory, actualName);
 		                                break;
 		                            }
 		                        }
@@ -25812,7 +25812,7 @@ function requireIo () {
 	Object.defineProperty(io, "__esModule", { value: true });
 	io.findInPath = io.which = io.mkdirP = io.rmRF = io.mv = io.cp = undefined;
 	const assert_1 = require$$0$3;
-	const path$1 = __importStar(path);
+	const path = __importStar(require$$1$5);
 	const ioUtil = __importStar(requireIoUtil());
 	/**
 	 * Copies a file or folder.
@@ -25832,7 +25832,7 @@ function requireIo () {
 	        }
 	        // If dest is an existing directory, should copy inside.
 	        const newDest = destStat && destStat.isDirectory() && copySourceDirectory
-	            ? path$1.join(dest, path$1.basename(source))
+	            ? path.join(dest, path.basename(source))
 	            : dest;
 	        if (!(yield ioUtil.exists(source))) {
 	            throw new Error(`no such file or directory: ${source}`);
@@ -25847,7 +25847,7 @@ function requireIo () {
 	            }
 	        }
 	        else {
-	            if (path$1.relative(source, newDest) === '') {
+	            if (path.relative(source, newDest) === '') {
 	                // a file cannot be copied to itself
 	                throw new Error(`'${newDest}' and '${source}' are the same file`);
 	            }
@@ -25869,7 +25869,7 @@ function requireIo () {
 	            let destExists = true;
 	            if (yield ioUtil.isDirectory(dest)) {
 	                // If dest is directory copy src into dest
-	                dest = path$1.join(dest, path$1.basename(source));
+	                dest = path.join(dest, path.basename(source));
 	                destExists = yield ioUtil.exists(dest);
 	            }
 	            if (destExists) {
@@ -25881,7 +25881,7 @@ function requireIo () {
 	                }
 	            }
 	        }
-	        yield mkdirP(path$1.dirname(dest));
+	        yield mkdirP(path.dirname(dest));
 	        yield ioUtil.rename(source, dest);
 	    });
 	}
@@ -25976,7 +25976,7 @@ function requireIo () {
 	        // build the list of extensions to try
 	        const extensions = [];
 	        if (ioUtil.IS_WINDOWS && process.env['PATHEXT']) {
-	            for (const extension of process.env['PATHEXT'].split(path$1.delimiter)) {
+	            for (const extension of process.env['PATHEXT'].split(path.delimiter)) {
 	                if (extension) {
 	                    extensions.push(extension);
 	                }
@@ -25991,7 +25991,7 @@ function requireIo () {
 	            return [];
 	        }
 	        // if any path separators, return empty
-	        if (tool.includes(path$1.sep)) {
+	        if (tool.includes(path.sep)) {
 	            return [];
 	        }
 	        // build the list of directories
@@ -26002,7 +26002,7 @@ function requireIo () {
 	        // across platforms.
 	        const directories = [];
 	        if (process.env.PATH) {
-	            for (const p of process.env.PATH.split(path$1.delimiter)) {
+	            for (const p of process.env.PATH.split(path.delimiter)) {
 	                if (p) {
 	                    directories.push(p);
 	                }
@@ -26011,7 +26011,7 @@ function requireIo () {
 	        // find all matches
 	        const matches = [];
 	        for (const directory of directories) {
-	            const filePath = yield ioUtil.tryGetExecutablePath(path$1.join(directory, tool), extensions);
+	            const filePath = yield ioUtil.tryGetExecutablePath(path.join(directory, tool), extensions);
 	            if (filePath) {
 	                matches.push(filePath);
 	            }
@@ -26120,7 +26120,7 @@ function requireToolrunner () {
 	const os = __importStar(require$$0);
 	const events = __importStar(require$$4$1);
 	const child = __importStar(require$$2$3);
-	const path$1 = __importStar(path);
+	const path = __importStar(require$$1$5);
 	const io = __importStar(requireIo());
 	const ioUtil = __importStar(requireIoUtil());
 	const timers_1 = require$$6$1;
@@ -26475,7 +26475,7 @@ function requireToolrunner () {
 	                (this.toolPath.includes('/') ||
 	                    (IS_WINDOWS && this.toolPath.includes('\\')))) {
 	                // prefer options.cwd if it is specified, however options.cwd may also need to be rooted
-	                this.toolPath = path$1.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
+	                this.toolPath = path.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
 	            }
 	            // if the tool is only a file name, then resolve it from the PATH
 	            // otherwise verify it exists (add extension on Windows if necessary)
@@ -26964,7 +26964,7 @@ function requireCore () {
 		const file_command_1 = requireFileCommand();
 		const utils_1 = requireUtils$3();
 		const os = __importStar(require$$0);
-		const path$1 = __importStar(path);
+		const path = __importStar(require$$1$5);
 		const oidc_utils_1 = requireOidcUtils();
 		/**
 		 * The code to exit an action
@@ -27019,7 +27019,7 @@ function requireCore () {
 		    else {
 		        (0, command_1.issueCommand)('add-path', {}, inputPath);
 		    }
-		    process.env['PATH'] = `${inputPath}${path$1.delimiter}${process.env['PATH']}`;
+		    process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
 		}
 		exports.addPath = addPath;
 		/**
@@ -27286,7 +27286,7 @@ function requireContext () {
 	hasRequiredContext = 1;
 	Object.defineProperty(context, "__esModule", { value: true });
 	context.Context = undefined;
-	const fs_1 = fs;
+	const fs_1 = require$$1;
 	const os_1 = require$$0;
 	class Context {
 	    /**
@@ -31937,76 +31937,6 @@ class ListWorkflowJobs {
     }
 }
 
-class FileSystem {
-    static CONFIG = {
-        ROOT_FOLDER: path.join(fileURLToPath(import.meta.url), '../../../'),
-        OUTPUT_FOLDER: 'output'
-    };
-    static get rootFolder() {
-        return this.CONFIG.ROOT_FOLDER;
-    }
-    static get outputFolder() {
-        return path.join(this.rootFolder, this.CONFIG.OUTPUT_FOLDER);
-    }
-    /**
-     * Make sure folder path exist, create new folder if not exist
-     * @param folderPath the folder need to be check if existed
-     */
-    static ensureFolderExists(folderPath) {
-        try {
-            if (!fs.existsSync(folderPath)) {
-                fs.mkdirSync(folderPath, { recursive: true });
-                Logger.info(`Folder created: ${folderPath}`);
-            }
-            else {
-                Logger.info(`Folder already exists: ${folderPath}`);
-            }
-        }
-        catch (_error) {
-            const error = _error;
-            Logger.error(`Failed to ensure folder exists: ${folderPath}, error is below:`);
-            Logger.error(error);
-            throw error;
-        }
-    }
-    static initOutputFolder() {
-        this.ensureFolderExists(this.outputFolder);
-    }
-    /**
-     * join file name after outputFolder
-     * @param fileName the fileName that will be joint after output folder
-     * @returns full outputFolder plus fileName
-     */
-    static getOutputFilePath(fileName) {
-        return path.join(this.outputFolder, fileName);
-    }
-    /**
-     * create or used existed
-     * @param folderName custom folder inside root
-     */
-    static initCustomFolder(folderName) {
-        const customFolderPath = path.join(this.rootFolder, folderName);
-        this.ensureFolderExists(customFolderPath);
-    }
-    /**
-     * @param filePath it need to be full path, not only filename
-     * @param data string that will be store in the [filePath]
-     */
-    static writeFileSync(filePath, data) {
-        fs.writeFileSync(filePath, data);
-    }
-    /**
-     * Write to output folder and te fileName is [filename]
-     * @param filePath only fileName, it wil be join with output path
-     * @param data string that will be store in the [filePath]
-     */
-    static writeToOutputFolder(fileName, data) {
-        const outputPath = FileSystem.getOutputFilePath(fileName);
-        FileSystem.writeFileSync(outputPath, data);
-        return outputPath;
-    }
-}
-
 /**
  * Info: (20250117 - Murky)
  * active is light blue
@@ -32425,22 +32355,9 @@ class JobGanttChartDrawer {
             ganttChart,
             jobs: filteredJobs
         });
-        const markdown = this.#generateMarkdown({
-            ganttChart,
-            title
-        });
+        const markdown = ganttChart.toMermaidSyntax();
         const summarySyntax = this.#generateSummaryText();
         return summarySyntax + markdown;
-    }
-    /**
-     * Mermaid Cli need to write syntax to local mmd file first,
-     * please make sure output folder exist by FileSystem.initOutputFolder()
-     */
-    #generateMarkdown(args) {
-        const { ganttChart, title } = args;
-        const ganttMermaidSyntax = ganttChart.toMermaidSyntax();
-        const ganttMMDFilePath = FileSystem.writeToOutputFolder(`${title}.mmd`, ganttMermaidSyntax);
-        return ganttMMDFilePath;
     }
     /**
      * Info: (20250117 - Murky)
@@ -32497,7 +32414,7 @@ class JobGanttChartDrawer {
         }));
         const jobSummary = 'Jobs details below:\n';
         const jobMessages = jobUrls
-            .map((jobUrl) => `- Job **${jobUrl.jobName}** details [here](${jobUrl.jobUrl})\n`)
+            .map((jobUrl) => `- Job **${jobUrl.jobName}** details [here](${jobUrl.jobUrl.url})\n`)
             .join('');
         return jobSummary + jobMessages;
     }
@@ -32605,6 +32522,7 @@ class MainJobsToGanttRunner {
         });
         const workflowJobs = await listWorkflowJobs.fetchFromGithub();
         Logger.debug(`WorkflowJobs fetch successfully, job length: ${workflowJobs.length}`);
+        Logger.debug(`WorkflowJobs: ${JSON.stringify(workflowJobs, null, 2)}`);
         return workflowJobs;
     }
     async #generateGanttChartParagraph(jobs) {
