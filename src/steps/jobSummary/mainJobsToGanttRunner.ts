@@ -37,6 +37,7 @@ export default class MainJobsToGanttRunner {
     Logger.debug(
       `WorkflowJobs fetch successfully, job length: ${workflowJobs.length}`
     )
+    Logger.debug(`WorkflowJobs: ${JSON.stringify(workflowJobs, null, 2)}`)
     return workflowJobs
   }
 

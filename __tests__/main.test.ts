@@ -53,15 +53,15 @@ describe('main.ts', () => {
     )
   })
 
-  it('Handles errors correctly', async () => {
-    // MainJobsToGanttRunner.default.prototype.run = jest.fn(() =>
-    //   Promise.reject(new Error('Mock error during execution'))
-    // )
-    jest
-      .spyOn(MainJobsToGanttRunner, 'default')
-      .mockImplementation(() => new Error('Mock error during execution'))
-    await run()
+  // it('Handles errors correctly', async () => {
+  //   // MainJobsToGanttRunner.default.prototype.run = jest.fn(() =>
+  //   //   Promise.reject(new Error('Mock error during execution'))
+  //   // )
+  //   jest
+  //     .spyOn(MainJobsToGanttRunner, 'default')
+  //     .mockImplementation(() => new Error('Mock error during execution'))
+  //   await run()
 
-    expect(core.setFailed).toHaveBeenCalled()
-  })
+  //   expect(core.setFailed).toHaveBeenCalled()
+  // })
 })

@@ -1,6 +1,5 @@
 import { githubContext } from '@/constants/github.js'
 import WorkflowJob from '@/steps/jobSummary/workflowJob.js'
-import FileSystem from '@/utils/fileSystem.js'
 import GanttChart from '@/utils/mermaid/gantt/ganttChart.js'
 import GanttTaskTag from '@/utils/mermaid/gantt/ganttTaskTag.js'
 import JobUrl from '@/utils/urls/jobUrl.js'
@@ -40,36 +39,11 @@ export default class JobGanttChartDrawer {
       jobs: filteredJobs
     })
 
-    const markdown = this.#generateMarkdown({
-      ganttChart,
-      title
-    })
+    const markdown = ganttChart.toMermaidSyntax()
 
     const summarySyntax = this.#generateSummaryText()
 
     return summarySyntax + markdown
-  }
-
-  /**
-   * Mermaid Cli need to write syntax to local mmd file first,
-   * please make sure output folder exist by FileSystem.initOutputFolder()
-   */
-  #generateMarkdown(
-    args: Readonly<{
-      ganttChart: GanttChart
-      title: string
-    }>
-  ): string {
-    const { ganttChart, title } = args
-
-    const ganttMermaidSyntax = ganttChart.toMermaidSyntax()
-
-    const ganttMMDFilePath = FileSystem.writeToOutputFolder(
-      `${title}.mmd`,
-      ganttMermaidSyntax
-    )
-
-    return ganttMMDFilePath
   }
 
   /**
@@ -154,7 +128,7 @@ export default class JobGanttChartDrawer {
     const jobMessages = jobUrls
       .map(
         (jobUrl) =>
-          `- Job **${jobUrl.jobName}** details [here](${jobUrl.jobUrl})\n`
+          `- Job **${jobUrl.jobName}** details [here](${jobUrl.jobUrl.url})\n`
       )
       .join('')
 
