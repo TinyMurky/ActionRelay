@@ -9,9 +9,23 @@ branding:
 
 # Define your inputs here.
 inputs:
+  NAME_OF_THIS_JOB:
+    description:
+      'The *Name* of current Job, job name need to provided in order to stop
+      waiting the job that run ActionRelay, which cause infinity loop'
+    required: true
   GITHUB_TOKEN:
     description: 'GitHub API Access Token'
     required: true
+  TIMEOUT_AFTER_MINUTE:
+    description:
+      'timeout waiting progress after timeoutAfterMinute maximum is 15'
+    required: false
+    default: '15'
+  INTERVAL_TO_CHECK_JOBS:
+    description: 'how long of waiting to check if job complete in millisecond'
+    required: false
+    default: '2500'
 
 outputs:
   time:

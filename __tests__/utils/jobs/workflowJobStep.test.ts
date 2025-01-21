@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals'
 import * as core from '../../../__fixtures__/core.js'
-import * as StepStatus from '../../../__fixtures__/steps/jobSummary/stepStatus.js'
-import * as StepConclusion from '../../../__fixtures__/steps/jobSummary/stepConclusion.js'
+import * as StepStatus from '../../../__fixtures__/utils/jobs/stepStatus.js'
+import * as StepConclusion from '../../../__fixtures__/utils/jobs/stepConclusion.js'
 import * as StartTime from '../../../__fixtures__/utils/times/startTime.js'
 import * as CompleteTime from '../../../__fixtures__/utils/times/completeTime.js'
 import { GanttChartTaskTag } from '../../../src/types/ganttChart.js'
@@ -11,13 +11,10 @@ import { GanttChartTaskTag } from '../../../src/types/ganttChart.js'
  */
 jest.unstable_mockModule('@actions/core', () => core)
 
-jest.unstable_mockModule(
-  '../../../src/steps/jobSummary/stepStatus',
-  () => StepStatus
-)
+jest.unstable_mockModule('../../../src/utils/jobs/stepStatus', () => StepStatus)
 
 jest.unstable_mockModule(
-  '../../../src/steps/jobSummary/stepConclusion',
+  '../../../src/utils/jobs/stepConclusion',
   () => StepConclusion
 )
 
@@ -32,14 +29,14 @@ jest.unstable_mockModule(
 // mocks are used in place of any actual dependencies.
 // since we use "Default" to export class, the class is actually in module.default
 const { default: WorkflowJobStep } = await import(
-  '../../../src/steps/jobSummary/workflowJobStep.js'
+  '../../../src/utils/jobs/workflowJobStep.js'
 )
 
 afterAll(() => {
   jest.resetAllMocks()
 })
 
-describe('steps/jobSummary/workflowJonStep', () => {
+describe('utils/jobs/workflowJonStep', () => {
   describe('initialization', () => {
     it('Should be init by steps from github', () => {
       const mockStatus = 'completed' as 'queued' | 'in_progress' | 'completed'

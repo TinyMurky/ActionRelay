@@ -1,3 +1,26 @@
+/**
+ * Source: [catchpoint/workflow-telemetry-action](https://github.com/catchpoint/workflow-telemetry-action/tree/master)
+ * Copyright (c) 2025 Catchpoint Systems 
+
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import * as core from '@actions/core'
 import { githubContext } from '@/constants/github.js'
 
@@ -5,6 +28,9 @@ import OctokitManager from '@/utils/octokitManager.js'
 import Logger from '@/utils/logger.js'
 
 import MainJobsToGanttRunner from '@/steps/jobSummary/mainJobsToGanttRunner.js'
+import CoreInput from '@/utils/coreInput.js'
+
+import { setTimeout } from 'timers/promises'
 
 /**
  * The main function for the action.
@@ -21,13 +47,16 @@ async function run(): Promise<void> {
     // Log the current timestamp, wait, then log the new timestamp
     Logger.debug(new Date().toTimeString())
 
-    const githubToken = core.getInput('GITHUB_TOKEN')
-    const octokit = OctokitManager.getInstance(githubToken)
+    const coreInput = CoreInput.getInstance()
+    const octokit = OctokitManager.getInstance(coreInput.githubToken)
 
     const stepGanttChartGenerate = new MainJobsToGanttRunner({
       octokit,
       githubContext
     })
+
+    // Info: (20250122 - Murky) Delay to that ActionRelay completed
+    await setTimeout(5000)
 
     await stepGanttChartGenerate.run()
 

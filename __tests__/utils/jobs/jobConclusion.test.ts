@@ -12,14 +12,14 @@ jest.unstable_mockModule('@actions/core', () => core)
 // mocks are used in place of any actual dependencies.
 // since we use "Default" to export class, the class is actually in module.default
 const { default: JobConclusion } = await import(
-  '../../../src/steps/jobSummary/jobConclusion.js'
+  '../../../src/utils/jobs/jobConclusion.js'
 )
 
 afterAll(() => {
   jest.resetAllMocks()
 })
 
-describe('steps/jobSummary/jobConclusion', () => {
+describe('utils/jobs/jobConclusion', () => {
   it('should return correct conclusion for a valid conclusion', () => {
     const instance = new JobConclusion('skipped')
     expect(instance.conclusion).toBe(WorkflowJobConclusion.skipped)

@@ -6,8 +6,8 @@
  */
 import { jest } from '@jest/globals'
 
-import mockStartTime from '../../../__fixtures__/utils/times/startTime.js'
-import mockCompleteTime from '../../../__fixtures__/utils/times/completeTime.js'
+import mockStartTime from '../times/startTime.js'
+import mockCompleteTime from '../times/completeTime.js'
 
 import { GanttChartTaskTag } from '../../../src/types/ganttChart.js'
 

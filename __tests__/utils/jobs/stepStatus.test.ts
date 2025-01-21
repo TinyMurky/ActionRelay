@@ -16,10 +16,10 @@ afterAll(() => {
 // mocks are used in place of any actual dependencies.
 // since we use "Default" to export class, the class is actually in module.default
 const { default: StepStatus } = await import(
-  '../../../src/steps/jobSummary/stepStatus.js'
+  '../../../src/utils/jobs/stepStatus.js'
 )
 
-describe('steps/jobSummary/stepStatus', () => {
+describe('utils/jobs/stepStatus', () => {
   it('Should init successfully by WorkflowJobStepStatus', () => {
     const targetStatus = WorkflowJobStatus.completed
     const stepStatus = new StepStatus(targetStatus)

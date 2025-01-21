@@ -4,7 +4,7 @@
  * might be delete later
  */
 export declare class EnvConfig {
-    readonly GITHUB_TOKEN: string;
+    readonly GITHUB_RUN_ATTEMPT: number;
     constructor(env: Readonly<NodeJS.ProcessEnv>);
 }
 declare const envConfigInstance: EnvConfig;
