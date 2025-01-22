@@ -11,6 +11,7 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  actions: read
 jobs:
   test-typescript:
     name: TypeScript Tests
@@ -72,7 +73,7 @@ jobs:
         run: echo "$MATRIX_CONTEXT"
   test-action:
     name: GitHub Actions Test
-    needs: [test-typescript, dump_contexts_to_log]
+    # needs: [test-typescript, dump_contexts_to_log]
     runs-on: ubuntu-latest
 
     steps:
@@ -84,7 +85,10 @@ jobs:
         id: test-action
         uses: ./
         with:
+          Name_OF_THIS_JOB: GitHub Actions Test
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TIMEOUT_AFTER_MINUTE: '15'
+          INTERVAL_TO_CHECK_JOBS: '2500'
 
       - name: Print Output
         id: output

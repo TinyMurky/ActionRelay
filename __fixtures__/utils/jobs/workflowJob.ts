@@ -6,13 +6,13 @@
  */
 import { jest } from '@jest/globals'
 
-import mockStartTime from '../../../__fixtures__/utils/times/startTime.js'
-import mockCreateTime from '../../../__fixtures__/utils/times/createTime.js'
-import mockCompleteTime from '../../../__fixtures__/utils/times/completeTime.js'
+import mockStartTime from '../times/startTime.js'
+import mockCreateTime from '../times/createTime.js'
+import mockCompleteTime from '../times/completeTime.js'
 import mockJobRun from '../../../__fixtures__/steps/jobSummary/jobRun.js'
 import mockJobStatus from '../../../__fixtures__/steps/jobSummary/jobStatus.js'
 import mockJobConclusion from '../../../__fixtures__/steps/jobSummary/jobConclusion.js'
-import mockWorkflowJobStep from '../../../__fixtures__/steps/jobSummary/workflowJobStep.js'
+import mockWorkflowJobStep from './workflowJobStep.js'
 
 import WorkflowJob from '../../../src/steps/jobSummary/workflowJob.js'
 import { WorkflowJobType } from '../../../src/types/job.js'

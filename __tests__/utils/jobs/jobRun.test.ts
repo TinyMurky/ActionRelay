@@ -6,11 +6,9 @@ import * as core from '../../../__fixtures__/core.js'
  */
 jest.unstable_mockModule('@actions/core', () => core)
 
-const { default: JobRun } = await import(
-  '../../../src/steps/jobSummary/jobRun.js'
-)
+const { default: JobRun } = await import('../../../src/utils/jobs/jobRun.js')
 
-describe('steps/jobSummary/jobRun', () => {
+describe('utils/jobs/jobRun', () => {
   it('Should be initialized by github run data from job', () => {
     const githubRawRun = {
       runId: 12786972425,

@@ -1,11 +1,15 @@
-import WorkflowJobStep from '@/steps/jobSummary/workflowJobStep.js'
-import { WorkflowJobType } from '@/types/job.js'
+import WorkflowJobStep from '@/utils/jobs/workflowJobStep.js'
+import {
+  WorkflowJobConclusion,
+  WorkflowJobStatus,
+  WorkflowJobType
+} from '@/types/job.js'
 import CompleteTime from '@/utils/times/completeTime.js'
 import CreateTime from '@/utils/times/createTime.js'
 import StartTime from '@/utils/times/startTime.js'
-import JobStatus from '@/steps/jobSummary/jobStatus.js'
-import JobConclusion from '@/steps/jobSummary/jobConclusion.js'
-import JobRun from '@/steps/jobSummary/jobRun.js'
+import JobStatus from '@/utils/jobs/jobStatus.js'
+import JobConclusion from '@/utils/jobs/jobConclusion.js'
+import JobRun from '@/utils/jobs/jobRun.js'
 
 export default class WorkflowJob {
   /**
@@ -239,10 +243,14 @@ export default class WorkflowJob {
   }
 
   /**
-   * Check if the job is completed.
+   * Check if the job is completed by check if status is completed
    */
   public isCompleted(): boolean {
-    return !!this.completedAt
+    return this.status.status === WorkflowJobStatus.completed
+  }
+
+  public isSuccess(): boolean {
+    return this.conclusion.conclusion === WorkflowJobConclusion.success
   }
 
   public filterStepWithBothStartAtAndCompleteAt(): WorkflowJob {

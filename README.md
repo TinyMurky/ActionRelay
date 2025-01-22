@@ -1,10 +1,16 @@
 # ActionRelay
 
-> [!link] This Action Referencing following Github Action
+> [!link] This project is based on or inspired by the following repositories:
 >
-> - [Create a GitHub Action Using TypeScript](https://github.com/actions/typescript-action)
+> - [catchpoint/workflow-telemetry-action](https://github.com/catchpoint/workflow-telemetry-action/tree/master)
+> - [yogeshlonkar/wait-for-jobs](https://github.com/yogeshlonkar/wait-for-jobs/tree/main)
+>
+> Please Check [License](./LICENSE) for more information
 
 ## Description
+
+> [!warning] report chart will not include the job that run ActionRelay, please
+> put ActionRelay in sibling job.
 
 - **Original Purpose**: ActionRelay originally want send Info to flutter App via
   middle relay server
@@ -14,11 +20,49 @@
 
 ## Inputs
 
+### `NAME_OF_THIS_JOB`
+
+Provide the `name` of the current job (e.g., if `name: Run Action Relay` is used
+in the workflow, input `Run Action Relay` here).  
+This input is used to filter out the job where ActionRelay is running to prevent
+it from waiting for itself to complete, which could cause an infinite loop.
+
+**Required:** Yes
+
+---
+
 ### `GITHUB_TOKEN`
 
-please provide literally `${{ secrets.GITHUB_TOKEN }}` to this value, Github
-will recognized `${{ secrets.GITHUB_TOKEN }}` and generate unique token just for
-this run.
+Provide the value `${{ secrets.GITHUB_TOKEN }}` exactly as shown. GitHub will
+automatically recognize this and generate a unique token for the current run.
+
+**Required:** Yes
+
+---
+
+### `TIMEOUT_AFTER_MINUTE`
+
+ActionRelay will wait for other jobs to complete before executing.  
+`TIMEOUT_AFTER_MINUTE` sets the maximum wait time in minutes. If the timeout is
+reached, ActionRelay will proceed to the reporting process.  
+If the value exceeds 15 minutes, it will be constrained to 15 minutes.
+
+**Required:** Yes  
+**Default:** '15'
+
+---
+
+### `INTERVAL_TO_CHECK_JOBS`
+
+ActionRelay will periodically fetch the GitHub API to check the status of other
+jobs while waiting for them to complete.  
+`INTERVAL_TO_CHECK_JOBS` sets the interval (in milliseconds) between each API
+fetch.
+
+**Required:** Yes  
+**Default:** '2500'
+
+---
 
 ## Outputs
 
@@ -37,8 +81,8 @@ The time this action finished
 permissions:
   pull-requests: write
 jobs:
-  your-job-name:
-    name: Your  name job
+  run_action_relay:
+    name: Run Action Relay
     runs-on: ubuntu-latest
 
     steps:
@@ -46,7 +90,10 @@ jobs:
         id: action-relay
         uses: Tiny_Murky/ActionRelay
         with:
+          NAME_OF_THIS_JOB: Run Action Relay
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TIMEOUT_AFTER_MINUTE: '15'
+          INTERVAL_TO_CHECK_JOBS: '2500'
       - name: other step
         id: other-step
         uses: xxxxx

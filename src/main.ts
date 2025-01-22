@@ -1,10 +1,10 @@
 import * as core from '@actions/core'
-// import { githubContext } from '@/constants/github.js'
+import { githubContext } from '@/constants/github.js'
 
-// import OctokitManager from '@/utils/octokitManager.js'
-// import Logger from '@/utils/logger.js'
-
-// import MainJobsToGanttRunner from '@/steps/jobSummary/mainJobsToGanttRunner.js'
+import OctokitManager from '@/utils/octokitManager.js'
+import WaitForJobsToComplete from '@/steps/waitForJobsToComplete/waitForJobsToComplete.js'
+import CoreInput from '@/utils/coreInput.js'
+import { EnvConfig } from '@/utils/envConfig.js'
 
 /**
  * The main function for the action.
@@ -13,25 +13,19 @@ import * as core from '@actions/core'
  */
 export async function run(): Promise<void> {
   try {
-    // const ms: string = core.getInput('milliseconds')
-
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    // Logger.debug(`Github Context: ${githubContext}`)
-
-    // Log the current timestamp, wait, then log the new timestamp
-    // Logger.debug(new Date().toTimeString())
-
-    // const githubToken = core.getInput('GITHUB_TOKEN')
-    // const octokit = OctokitManager.getInstance(githubToken)
-
-    // const stepGanttChartGenerate = new MainJobsToGanttRunner({
-    //   octokit,
-    //   githubContext
-    // })
-
-    // await stepGanttChartGenerate.run()
+    const coreInput = CoreInput.getInstance()
+    const envConfig = new EnvConfig(process.env)
+    const octokit = OctokitManager.getInstance(coreInput.githubToken)
 
     // Set outputs for other workflow steps to use
+    const waitForJobsToComplete = new WaitForJobsToComplete({
+      githubContext,
+      octokit,
+      coreInput,
+      envConfig
+    })
+
+    await waitForJobsToComplete.start()
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
     // Fail the workflow run if an error occurs

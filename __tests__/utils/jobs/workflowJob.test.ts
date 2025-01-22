@@ -1,11 +1,11 @@
 import { jest } from '@jest/globals'
 import * as core from '../../../__fixtures__/core.js'
 
-import * as JobStatus from '../../../__fixtures__/steps/jobSummary/jobStatus.js'
-import * as JobConclusion from '../../../__fixtures__/steps/jobSummary/jobConclusion.js'
-import * as JobRun from '../../../__fixtures__/steps/jobSummary/jobRun.js'
+import * as JobStatus from '../../../__fixtures__/utils/jobs/jobStatus.js'
+import * as JobConclusion from '../../../__fixtures__/utils/jobs/jobConclusion.js'
+import * as JobRun from '../../../__fixtures__/utils/jobs/jobRun.js'
 
-import * as WorkflowJobStep from '../../../__fixtures__/steps/jobSummary/workflowJobStep.js'
+import * as WorkflowJobStep from '../../../__fixtures__/utils/jobs/workflowJobStep.js'
 
 import * as StartTime from '../../../__fixtures__/utils/times/startTime.js'
 import * as CreateTime from '../../../__fixtures__/utils/times/createTime.js'
@@ -16,20 +16,17 @@ import * as CompleteTime from '../../../__fixtures__/utils/times/completeTime.js
  */
 jest.unstable_mockModule('@actions/core', () => core)
 
-jest.unstable_mockModule(
-  '../../../src/steps/jobSummary/jobStatus',
-  () => JobStatus
-)
+jest.unstable_mockModule('../../../src/utils/jobs/jobStatus', () => JobStatus)
 
 jest.unstable_mockModule(
-  '../../../src/steps/jobSummary/jobConclusion',
+  '../../../src/utils/jobs/jobConclusion',
   () => JobConclusion
 )
 
-jest.unstable_mockModule('../../../src/steps/jobSummary/jobRun', () => JobRun)
+jest.unstable_mockModule('../../../src/utils/jobs/jobRun', () => JobRun)
 
 jest.unstable_mockModule(
-  '../../../src/steps/jobSummary/workflowJobStep',
+  '../../../src/utils/jobs/workflowJobStep',
   () => WorkflowJobStep
 )
 
@@ -49,7 +46,7 @@ jest.unstable_mockModule(
 // mocks are used in place of any actual dependencies.
 // since we use "Default" to export class, the class is actually in module.default
 const { default: WorkflowJob } = await import(
-  '../../../src/steps/jobSummary/workflowJob.js'
+  '../../../src/utils/jobs/workflowJob.js'
 )
 
 afterAll(() => {

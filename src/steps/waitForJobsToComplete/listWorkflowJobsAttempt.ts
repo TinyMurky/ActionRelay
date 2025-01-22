@@ -1,6 +1,6 @@
 /**
- * Source: [catchpoint/workflow-telemetry-action](https://github.com/catchpoint/workflow-telemetry-action/tree/master)
- * Copyright (c) 2025 Catchpoint Systems 
+ * Source: [yogeshlonkar/wait-for-jobs](https://github.com/yogeshlonkar/wait-for-jobs/tree/main)
+ * Copyright (c) 2025 yogeshlonkar
 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,9 +20,12 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
 import { GitHubInstance } from '@/types/github.js'
 import { Context } from '@actions/github/lib/context.js'
 import WorkflowJob from '@/utils/jobs/workflowJob.js'
+import Logger from '@/utils/logger.js'
+import { EnvConfig } from '@/utils/envConfig.js'
 
 /**
  * Info: (20250113 - Murky)
@@ -32,68 +35,55 @@ import WorkflowJob from '@/utils/jobs/workflowJob.js'
  * Then we export text that can be used in [mermaid-cli](https://github.com/mermaid-js/mermaid-cli),
  * mermaid-cli guild please check [Gantt diagrams](https://mermaid.js.org/syntax/gantt.html)
  */
-export default class ListWorkflowJobs {
+export default class ListWorkflowJobsAttempt {
   /**
-   * Info: (20250113 - Murky)
-   * Maximum jobs GITHUB allow to fetch per page
-   */
-  static readonly #MAX_PAGE_SIZE = 100
-
-  /**
-   * Info: (20250114 - Murky)
    * github toolkit to fetch api
    */
   readonly #octokit: GitHubInstance
 
   readonly #githubContext: Context
 
+  readonly #envConfig: EnvConfig
+
   constructor(
     options: Readonly<{
       octokit: GitHubInstance
       githubContext: Context
+      envConfig: EnvConfig
     }>
   ) {
-    const { octokit, githubContext } = options
+    const { octokit, githubContext, envConfig } = options
 
     this.#octokit = octokit
     this.#githubContext = githubContext
+    this.#envConfig = envConfig
   }
 
-  public async fetchFromGithub() {
-    const { repo, runId } = this.#githubContext
+  public async fetchFromGithub(): Promise<WorkflowJob[]> {
+    const attempt_number = this.#envConfig.GITHUB_RUN_ATTEMPT
 
-    const page = 0
+    const {
+      runId: run_id,
+      repo: { owner, repo }
+    } = this.#githubContext
 
-    const workflowJobs: WorkflowJob[] = []
+    Logger.debug(
+      `fetching jobs for /repos/${owner}/${repo}/actions/runs/${run_id}/attempts/${attempt_number}/jobs`
+    )
 
-    while (true) {
-      const result = await this.#octokit.rest.actions.listJobsForWorkflowRun({
-        owner: repo.owner,
-        repo: repo.repo,
-        run_id: runId,
-        page,
-        per_page: ListWorkflowJobs.#MAX_PAGE_SIZE
-      })
-
-      const jobs = result.data.jobs
-
-      if (!jobs || jobs.length <= 0) {
-        break
+    const jobs = await this.#octokit.paginate(
+      this.#octokit.rest.actions.listJobsForWorkflowRunAttempt,
+      {
+        attempt_number,
+        owner,
+        repo,
+        run_id
       }
+    )
 
-      for (const job of jobs) {
-        const workflowJob: WorkflowJob = WorkflowJob.fromGithub(job)
-        workflowJobs.push(workflowJob)
-      }
-
-      /**
-       * Info: (20250114 - Murky)
-       * If jobs length less than max page, we are in last page, no need to fetch again
-       */
-      if (jobs.length <= ListWorkflowJobs.#MAX_PAGE_SIZE) {
-        break
-      }
-    }
+    const workflowJobs: WorkflowJob[] = jobs.map((job) =>
+      WorkflowJob.fromGithub(job)
+    )
 
     return workflowJobs
   }
