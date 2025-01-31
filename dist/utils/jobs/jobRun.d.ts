@@ -23,4 +23,9 @@ export default class JobRun {
         url: string;
         attempt: number | undefined;
     }>);
+    toJson(): {
+        id: number;
+        url: string;
+        attempt: number;
+    };
 }

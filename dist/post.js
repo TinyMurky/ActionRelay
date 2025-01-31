@@ -1,4 +1,4 @@
-import { W as WorkflowJob, G as GanttChartTaskTag, g as githubContext, L as Logger, C as CoreInput, O as OctokitManager, c as coreExports } from './coreInput-H5PK0cVn.js';
+import { W as WorkflowJob, G as GanttChartTaskTag, g as githubContext, L as Logger, D as DateTime, a as CreateTime, C as CoreInput, O as OctokitManager, c as coreExports } from './coreInput-CCBlV6Fl.js';
 import { setTimeout } from 'timers/promises';
 import 'fs';
 import 'os';
@@ -183,7 +183,7 @@ class GanttTaskTag {
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-var _a;
+var _a$1;
 class GanttTask {
     static #MILESTONE_KEYWORDS = ['Set up job', 'Complete job'];
     name;
@@ -250,13 +250,13 @@ class GanttTask {
         }
     }
     #isMilestoneTask() {
-        return _a.#MILESTONE_KEYWORDS.some((keyword) => this.name.includes(keyword));
+        return _a$1.#MILESTONE_KEYWORDS.some((keyword) => this.name.includes(keyword));
     }
     #isMilestoneTagExist() {
         return this.tags.some((tag) => tag.tag === GanttChartTaskTag.milestone);
     }
 }
-_a = GanttTask;
+_a$1 = GanttTask;
 
 /**
  * Source: [catchpoint/workflow-telemetry-action](https://github.com/catchpoint/workflow-telemetry-action/tree/master)
@@ -428,12 +428,12 @@ class GanttChart {
 /**
  * Store owner of repo (or issue) from github context
  */
-class Owner {
+class GithubContextOwner {
     name;
     constructor(args) {
         const { name } = args;
         if (!name) {
-            throw new Error('Owner should be initialized by name at least 1 character');
+            throw new Error('GithubContextOwner should be initialized by name at least 1 character');
         }
         this.name = name;
     }
@@ -442,12 +442,12 @@ class Owner {
 /**
  * Store name of repo (or issue) from github context
  */
-class Repo {
+class GithubContextRepo {
     name;
     constructor(args) {
         const { name } = args;
         if (!name) {
-            throw new Error('Repo should be initialized by name at least 1 character');
+            throw new Error('GithubContextRepo should be initialized by name at least 1 character');
         }
         this.name = name;
     }
@@ -463,10 +463,10 @@ class GithubUrl {
     }
     static fromString(args) {
         const { owner, repo } = args;
-        const newOwner = new Owner({
+        const newOwner = new GithubContextOwner({
             name: owner
         });
-        const newRepo = new Repo({
+        const newRepo = new GithubContextRepo({
             name: repo
         });
         return new GithubUrl({
@@ -495,10 +495,10 @@ class JobUrl extends GithubUrl {
     }
     static fromString(args) {
         const { jobId, owner, repo } = args;
-        const newOwner = new Owner({
+        const newOwner = new GithubContextOwner({
             name: owner
         });
-        const newRepo = new Repo({
+        const newRepo = new GithubContextRepo({
             name: repo
         });
         return new JobUrl({
@@ -529,10 +529,10 @@ class CommitUrl extends GithubUrl {
     }
     static fromString(args) {
         const { commitId, owner, repo } = args;
-        const newOwner = new Owner({
+        const newOwner = new GithubContextOwner({
             name: owner
         });
-        const newRepo = new Repo({
+        const newRepo = new GithubContextRepo({
             name: repo
         });
         return new CommitUrl({
@@ -560,10 +560,10 @@ class PullRequestCommitUrl extends CommitUrl {
         const { repo, sha } = githubContext;
         const { pull_request } = githubContext.payload;
         const commitId = (pull_request && pull_request.head && pull_request.head.sha) || sha;
-        const newOwner = new Owner({
+        const newOwner = new GithubContextOwner({
             name: repo.owner
         });
-        const newRepo = new Repo({
+        const newRepo = new GithubContextRepo({
             name: repo.repo
         });
         return new PullRequestCommitUrl({
@@ -691,8 +691,8 @@ class PullRequestCommitter {
             throw new Error('Context does not contain a pull request');
         }
         this.octokit = octokit;
-        this.owner = new Owner({ name: context.repo.owner });
-        this.repo = new Repo({ name: context.repo.repo });
+        this.owner = new GithubContextOwner({ name: context.repo.owner });
+        this.repo = new GithubContextRepo({ name: context.repo.repo });
         this.pullRequestId = context.payload.pull_request.number;
     }
     async postComment(body) {
@@ -713,8 +713,8 @@ class IssueCommitter {
     constructor(args) {
         const { octokit, context } = args;
         this.octokit = octokit;
-        this.owner = new Owner({ name: context.repo.owner });
-        this.repo = new Repo({ name: context.repo.repo });
+        this.owner = new GithubContextOwner({ name: context.repo.owner });
+        this.repo = new GithubContextRepo({ name: context.repo.repo });
         this.issueNumber = context.issue.number;
     }
     async postComment(body) {
@@ -842,6 +842,984 @@ class MainJobsToGanttRunner {
     }
 }
 
+var PullRequestStatusType;
+(function (PullRequestStatusType) {
+    PullRequestStatusType["open"] = "open";
+    PullRequestStatusType["closed"] = "closed";
+})(PullRequestStatusType || (PullRequestStatusType = {}));
+
+class PullRequestStatus {
+    status;
+    constructor(status) {
+        this.#assertIsPullRequestStatusType(status);
+        this.status = status;
+    }
+    /**
+     * Convert unknown to {@link PullRequestStatusType}
+     * Throw Error if not in enum
+     */
+    #assertIsPullRequestStatusType(status) {
+        if (!Object.values(PullRequestStatusType).includes(status)) {
+            throw new Error('Status is not PullRequestStatusType');
+        }
+    }
+}
+
+class UpdateTime extends DateTime {
+    constructor(date) {
+        super(date);
+    }
+    static fromDate(date) {
+        return new UpdateTime(date);
+    }
+    static fromISOString(date) {
+        return new UpdateTime(date);
+    }
+}
+
+class MergeTime extends DateTime {
+    constructor(date) {
+        super(date);
+    }
+    static fromDate(date) {
+        return new MergeTime(date);
+    }
+    static fromISOString(date) {
+        return new MergeTime(date);
+    }
+}
+
+class CloseTime extends DateTime {
+    constructor(date) {
+        super(date);
+    }
+    static fromDate(date) {
+        return new CloseTime(date);
+    }
+    static fromISOString(date) {
+        return new CloseTime(date);
+    }
+}
+
+class PullRequestBody {
+    content;
+    constructor(content) {
+        if (!content || content.length <= 0) {
+            throw new Error('PullRequestBody need to  be initialize by content with at least 1 character.');
+        }
+        this.content = content.replace('\r', '');
+    }
+}
+
+class PullRequestSha {
+    static SHA_LENGTH = 40;
+    sha;
+    constructor(sha) {
+        if (sha.length !== PullRequestSha.SHA_LENGTH) {
+            throw Error(`SHA need to be the string that has ${PullRequestSha.SHA_LENGTH} length`);
+        }
+        this.sha = sha;
+    }
+    static fromContext(githubContext) {
+        const { pull_request } = githubContext.payload;
+        if (!pull_request?.head?.sha) {
+            throw new Error('To init PullRequestSha from Context, the trigger must be pull request event');
+        }
+        return new PullRequestSha(pull_request.head.sha);
+    }
+}
+
+var _a;
+class UserEmail {
+    static #EMAIL_REGEX = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    email;
+    constructor(email) {
+        if (!this.#isEmail(email)) {
+            throw new Error('UserEmail must be initialized by real email');
+        }
+        this.email = email;
+    }
+    #isEmail(email) {
+        return _a.#EMAIL_REGEX.test(email);
+    }
+}
+_a = UserEmail;
+
+class UserName {
+    name;
+    constructor(name) {
+        if (!name || name.length <= 0) {
+            throw new Error('UserName must be initialized at least one character');
+        }
+        this.name = name;
+    }
+}
+
+class UserAvatarUrl {
+    url;
+    constructor(url) {
+        if (!url || url.length <= 0) {
+            throw new Error('UserAvatarUrl must be initialized at least 1 character.');
+        }
+        this.url = url;
+    }
+}
+
+/**
+ * Init by github get user by id [api](https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user-using-their-id)
+ */
+class PullRequestUser {
+    id;
+    avatarUrl;
+    name;
+    email;
+    constructor(args) {
+        if (!args.id) {
+            throw new Error('Id need to be provided when initialize PublicUser');
+        }
+        if (!Number.isInteger(args.id)) {
+            throw new Error('Id need to be integer when initialize PublicUser');
+        }
+        if (args.id <= 0) {
+            throw new Error('Id need to be larger than 0 when initialize PublicUser');
+        }
+        this.id = args.id;
+        this.avatarUrl = args.avatarUrl;
+        this.name = args.name;
+        this.email = args.email;
+    }
+    static fromGithub(user) {
+        const { id, avatar_url, name, email } = user;
+        const userAvatarUrl = new UserAvatarUrl(avatar_url);
+        const userName = name ? new UserName(name) : null;
+        const userEmail = email ? new UserEmail(email) : null;
+        return new PullRequestUser({
+            id,
+            avatarUrl: userAvatarUrl,
+            name: userName,
+            email: userEmail
+        });
+    }
+    toJson() {
+        const { id, avatarUrl, name, email } = this;
+        const json = {
+            id: id,
+            avatarUrl: avatarUrl.url,
+            name: name ? name.name : null,
+            email: email ? email.email : null
+        };
+        return json;
+    }
+}
+
+class PullRequest {
+    id;
+    sha;
+    body;
+    state;
+    user;
+    createdAt;
+    updatedAt;
+    mergedAt;
+    closedAt;
+    constructor(args) {
+        if (!args.id) {
+            throw new Error('Id need to be provided when initialize Pull Request');
+        }
+        if (!Number.isInteger(args.id)) {
+            throw new Error('Id need to be integer when initialize Pull Request');
+        }
+        if (args.id <= 0) {
+            throw new Error('Id need to be larger than 0 when initialize Pull Request');
+        }
+        this.id = args.id;
+        this.sha = args.sha;
+        this.body = args.body;
+        this.state = args.state;
+        this.user = args.user;
+        this.createdAt = args.createdAt;
+        this.updatedAt = args.updatedAt;
+        this.mergedAt = args.mergedAt;
+        this.closedAt = args.closedAt;
+    }
+    static fromGithub(args) {
+        const { githubPullRequest, sha } = args;
+        const id = githubPullRequest.id;
+        const shaInstance = sha instanceof PullRequestSha ? sha : new PullRequestSha(sha);
+        const body = new PullRequestBody(githubPullRequest.body);
+        const state = new PullRequestStatus(githubPullRequest.state);
+        const user = PullRequestUser.fromGithub(githubPullRequest.user);
+        const createdAt = CreateTime.fromISOString(githubPullRequest.created_at);
+        const updatedAt = UpdateTime.fromISOString(githubPullRequest.updated_at);
+        const mergedAt = githubPullRequest?.merged_at
+            ? MergeTime.fromISOString(githubPullRequest.merged_at)
+            : null;
+        const closedAt = githubPullRequest?.closed_at
+            ? CloseTime.fromISOString(githubPullRequest.closed_at)
+            : null;
+        return new PullRequest({
+            id,
+            sha: shaInstance,
+            body,
+            state,
+            user,
+            createdAt,
+            updatedAt,
+            mergedAt,
+            closedAt
+        });
+    }
+    toJson() {
+        const { id, sha, body, state, user, createdAt, updatedAt, mergedAt, closedAt } = this;
+        const json = {
+            id: id,
+            sha: sha.sha,
+            body: body.content,
+            state: state.status.toString(),
+            user: user.toJson(),
+            createdAt: createdAt.timestamp,
+            updatedAt: updatedAt.timestamp,
+            mergedAt: mergedAt ? mergedAt.timestamp : null,
+            closedAt: closedAt ? closedAt.timestamp : null
+        };
+        return json;
+    }
+}
+
+class PullRequestNumber {
+    pullNumber;
+    constructor(pullNumber) {
+        this.pullNumber = pullNumber;
+    }
+    static fromGithubContext(githubContext) {
+        const pullNumber = githubContext.payload.pull_request?.number;
+        if (!pullNumber) {
+            throw new Error('To list all commits from pull request, pull request and pull request number must exist in Github Context');
+        }
+        return new PullRequestNumber(pullNumber);
+    }
+}
+
+class GetPullRequest {
+    #octokit;
+    #githubContext;
+    constructor(args) {
+        this.#octokit = args.octokit;
+        this.#githubContext = args.githubContext;
+    }
+    async #fetchByOctokit() {
+        const pullRequestNumber = PullRequestNumber.fromGithubContext(this.#githubContext);
+        const { repo: { owner, repo } } = this.#githubContext;
+        const githubPullRequestResponse = await this.#octokit.rest.pulls.get({
+            owner,
+            repo,
+            pull_number: pullRequestNumber.pullNumber
+        });
+        if (githubPullRequestResponse.status !== 200) {
+            throw new Error(`Fetch Pull Request from github failed with code: ${githubPullRequestResponse.status}`);
+        }
+        return githubPullRequestResponse;
+    }
+    async fetchFromGithub() {
+        const sha = PullRequestSha.fromContext(this.#githubContext);
+        const githubPullRequestResponse = await this.#fetchByOctokit();
+        const pullRequest = PullRequest.fromGithub({
+            githubPullRequest: githubPullRequestResponse.data,
+            sha
+        });
+        return pullRequest;
+    }
+}
+
+class RepoFullName {
+    name;
+    constructor(name) {
+        if (!name) {
+            throw new Error('RepoFullName should be initialized by name at least 1 character');
+        }
+        this.name = name;
+    }
+}
+
+class RepoName {
+    name;
+    constructor(name) {
+        if (!name) {
+            throw new Error('RepoName should be initialized by name at least 1 character');
+        }
+        this.name = name;
+    }
+}
+
+class Repository {
+    id;
+    name;
+    fullName;
+    constructor(args) {
+        const { id, name, fullName } = args;
+        if (!id) {
+            throw new Error('Id need to be provided when initialize Repository');
+        }
+        if (!Number.isInteger(id)) {
+            throw new Error('Id need to be integer when initialize Repository');
+        }
+        if (id <= 0) {
+            throw new Error('Id need to be larger than 0 when initialize Repository');
+        }
+        this.id = id;
+        this.name = name;
+        this.fullName = fullName;
+    }
+    static fromGithub(githubRepository) {
+        const name = new RepoName(githubRepository.name);
+        const fullName = new RepoFullName(githubRepository.full_name);
+        return new Repository({
+            id: githubRepository.id,
+            name,
+            fullName
+        });
+    }
+    toJson() {
+        const { id, name, fullName } = this;
+        const json = {
+            id: id,
+            name: name.name,
+            fullName: fullName.name
+        };
+        return json;
+    }
+}
+
+/**
+ * This class will fetch contributor of an repository,
+ * than fetch more detail from get user by id api
+ */
+class GetRepository {
+    #octokit;
+    #githubContext;
+    constructor(args) {
+        this.#octokit = args.octokit;
+        this.#githubContext = args.githubContext;
+    }
+    async #fetchRepositoryByOctokit() {
+        const { repo: { owner, repo } } = this.#githubContext;
+        let response;
+        try {
+            response = await this.#octokit.rest.repos.get({
+                owner,
+                repo
+            });
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error('Can not fetch repository from Octokit in #fetchRepositoryByOctokit');
+            Logger.error(error);
+            throw error;
+        }
+        const githubRepository = response.data;
+        return githubRepository;
+    }
+    #createRepositoryInstance(githubRepository) {
+        return Repository.fromGithub(githubRepository);
+    }
+    async fetchFromGithub() {
+        let githubRepository;
+        try {
+            githubRepository = await this.#fetchRepositoryByOctokit();
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error('Can not fetch repository from Octokit in fetchFromGithub');
+            Logger.error(error);
+            throw error;
+        }
+        const repository = this.#createRepositoryInstance(githubRepository);
+        return repository;
+    }
+}
+
+/**
+ * Init by github get user by id [api](https://docs.github.com/en/rest/users/users?apiVersion=2022-11-28#get-a-user-using-their-id)
+ */
+class PublicUser {
+    id;
+    avatarUrl;
+    name;
+    email;
+    constructor(args) {
+        if (!args.id) {
+            throw new Error('Id need to be provided when initialize PublicUser');
+        }
+        if (!Number.isInteger(args.id)) {
+            throw new Error('Id need to be integer when initialize PublicUser');
+        }
+        if (args.id <= 0) {
+            throw new Error('Id need to be larger than 0 when initialize PublicUser');
+        }
+        this.id = args.id;
+        this.avatarUrl = args.avatarUrl;
+        this.name = args.name;
+        this.email = args.email;
+    }
+    static fromGithub(user) {
+        const { id, avatar_url, name, email } = user;
+        const userAvatarUrl = new UserAvatarUrl(avatar_url);
+        const userName = name ? new UserName(name) : null;
+        const userEmail = email ? new UserEmail(email) : null;
+        return new PublicUser({
+            id,
+            avatarUrl: userAvatarUrl,
+            name: userName,
+            email: userEmail
+        });
+    }
+    toJson() {
+        const { id, avatarUrl, name, email } = this;
+        const json = {
+            id: id,
+            avatarUrl: avatarUrl.url,
+            name: name ? name.name : null,
+            email: email ? email.email : null
+        };
+        return json;
+    }
+}
+
+/**
+ * This class will fetch contributor of an repository,
+ * than fetch more detail from get user by id api
+ */
+class ListContributor {
+    #octokit;
+    #githubContext;
+    constructor(args) {
+        this.#octokit = args.octokit;
+        this.#githubContext = args.githubContext;
+    }
+    async #fetchContributorByOctokit() {
+        const { repo: { owner, repo } } = this.#githubContext;
+        let contributors;
+        try {
+            contributors = await this.#octokit.paginate(this.#octokit.rest.repos.listContributors, {
+                owner,
+                repo
+            });
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error(error);
+            throw new Error('Unable to fetch contributors from GitHub in #fetchContributorByOctokit');
+        }
+        const constructorsWithId = contributors.filter((contributor) => contributor.id !== undefined);
+        return constructorsWithId;
+    }
+    async #fetchUserById(id) {
+        try {
+            const response = await this.#octokit.request('GET /user/{account_id}', {
+                account_id: id,
+                headers: {
+                    'X-GitHub-Api-Version': '2022-11-28'
+                }
+            });
+            const githubUser = response.data;
+            return githubUser;
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error(`Failed to fetch user with ID ${id}:`);
+            Logger.error(error);
+            return null;
+        }
+    }
+    #createUserInstance(githubUser) {
+        return PublicUser.fromGithub(githubUser);
+    }
+    async fetchFromGithub() {
+        let githubContributors = [];
+        try {
+            githubContributors = await this.#fetchContributorByOctokit();
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error(error);
+            throw new Error('Unable to fetch contributors from GitHub');
+        }
+        let githubUsers = [];
+        try {
+            const githubUsersWithNull = await Promise.all(githubContributors.map((contributor) => this.#fetchUserById(contributor.id)));
+            githubUsers = githubUsersWithNull.filter((user) => user !== null);
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error(error);
+            throw new Error('Unable to fetch users from GitHub');
+        }
+        const users = githubUsers.map((user) => this.#createUserInstance(user));
+        return users;
+    }
+}
+
+class CommitSha {
+    static SHA_LENGTH = 40;
+    sha;
+    constructor(sha) {
+        if (sha.length !== CommitSha.SHA_LENGTH) {
+            throw Error(`SHA need to be the string that has ${CommitSha.SHA_LENGTH} length`);
+        }
+        this.sha = sha;
+    }
+}
+
+class CommitMessage {
+    content;
+    constructor(content) {
+        if (!content || content.length <= 0) {
+            throw new Error('CommitMessage need to be initialized by content at least 1 character');
+        }
+        this.content = content.replace('\r', '');
+    }
+}
+
+class Commit {
+    sha;
+    message;
+    constructor(args) {
+        const { sha, message } = args;
+        this.sha = sha;
+        this.message = message;
+    }
+    static fromGithub(githubCommit) {
+        const sha = new CommitSha(githubCommit.sha);
+        const message = new CommitMessage(githubCommit.commit.message);
+        return new Commit({
+            sha,
+            message
+        });
+    }
+    toJson() {
+        const { sha, message } = this;
+        const json = {
+            sha: sha.sha,
+            message: message.content
+        };
+        return json;
+    }
+}
+
+class ListPrCommit {
+    #octokit;
+    #githubContext;
+    constructor(args) {
+        this.#octokit = args.octokit;
+        this.#githubContext = args.githubContext;
+    }
+    async fetchFromGithub() {
+        const githubCommits = await this.#fetchCommitByOctokit();
+        const commits = githubCommits.map((githubCommit) => Commit.fromGithub(githubCommit));
+        return commits;
+    }
+    async #fetchCommitByOctokit() {
+        const pullRequestNumber = PullRequestNumber.fromGithubContext(this.#githubContext);
+        const { repo: { owner, repo } } = this.#githubContext;
+        const githubCommits = await this.#octokit.paginate(this.#octokit.rest.pulls.listCommits, {
+            owner,
+            repo,
+            pull_number: pullRequestNumber.pullNumber
+        });
+        return githubCommits;
+    }
+}
+
+class FileAdditionLength {
+    length;
+    constructor(length) {
+        if (!Number.isInteger(length)) {
+            throw new Error('length need to be integer when initialize FileAdditionLength');
+        }
+        if (length < 0) {
+            throw new Error('length need to be non negative when initialize FileAdditionLength');
+        }
+        this.length = length;
+    }
+}
+
+class FileChangeLength {
+    length;
+    constructor(length) {
+        if (!Number.isInteger(length)) {
+            throw new Error('length need to be integer when initialize FileChangeLength');
+        }
+        if (length < 0) {
+            throw new Error('length need to be non negative when initialize FileChangeLength');
+        }
+        this.length = length;
+    }
+}
+
+class FileDeletionLength {
+    length;
+    constructor(length) {
+        if (!Number.isInteger(length)) {
+            throw new Error('length need to be integer when initialize FileDeletionLength');
+        }
+        if (length < 0) {
+            throw new Error('length need to be non negative when initialize FileDeletionLength');
+        }
+        this.length = length;
+    }
+}
+
+class FileName {
+    name;
+    constructor(name) {
+        if (!name || name.length <= 0) {
+            throw new Error('FileName need to be initialized at least 1 character');
+        }
+        this.name = name;
+    }
+}
+
+class FileSha {
+    static SHA_LENGTH = 40;
+    sha;
+    constructor(sha) {
+        if (sha.length !== FileSha.SHA_LENGTH) {
+            throw Error(`SHA need to be the string that has ${FileSha.SHA_LENGTH} length`);
+        }
+        this.sha = sha;
+    }
+}
+
+var PullRequestFileStatusType;
+(function (PullRequestFileStatusType) {
+    PullRequestFileStatusType["added"] = "added";
+    PullRequestFileStatusType["removed"] = "removed";
+    PullRequestFileStatusType["modified"] = "modified";
+    PullRequestFileStatusType["renamed"] = "renamed";
+    PullRequestFileStatusType["copied"] = "copied";
+    PullRequestFileStatusType["changed"] = "changed";
+    PullRequestFileStatusType["unchanged"] = "unchanged";
+})(PullRequestFileStatusType || (PullRequestFileStatusType = {}));
+
+class FileStatus {
+    status;
+    constructor(status) {
+        this.#assertIsPullRequestFileStatusType(status);
+        this.status = status;
+    }
+    /**
+     * Convert unknown to PullRequestFileStatusType
+     * Throw Error if not in enum
+     */
+    #assertIsPullRequestFileStatusType(status) {
+        if (!Object.values(PullRequestFileStatusType).includes(status)) {
+            throw new Error('Status is not WorkflowJobStepStatus');
+        }
+    }
+}
+
+class PullRequestFile {
+    sha;
+    filename;
+    status;
+    additions;
+    deletions;
+    changes;
+    constructor(args) {
+        this.sha = args.sha;
+        this.filename = args.filename;
+        this.status = args.status;
+        this.additions = args.additions;
+        this.deletions = args.deletions;
+        this.changes = args.changes;
+    }
+    static fromGithub(githubFile) {
+        const { sha, filename, status, additions, deletions, changes } = githubFile;
+        const fileSha = new FileSha(sha);
+        const fileName = new FileName(filename);
+        const fileStatus = new FileStatus(status);
+        const fileAdditionLength = new FileAdditionLength(additions);
+        const fileDeletionLength = new FileDeletionLength(deletions);
+        const fileChangeLength = new FileChangeLength(changes);
+        return new PullRequestFile({
+            sha: fileSha,
+            filename: fileName,
+            status: fileStatus,
+            additions: fileAdditionLength,
+            deletions: fileDeletionLength,
+            changes: fileChangeLength
+        });
+    }
+    toJson() {
+        const { sha, filename, status, additions, deletions, changes } = this;
+        const json = {
+            sha: sha.sha,
+            filename: filename.name,
+            status: status.status.toString(),
+            additions: additions.length,
+            deletions: deletions.length,
+            changes: changes.length
+        };
+        return json;
+    }
+}
+
+class ListPrFileChange {
+    #octokit;
+    #githubContext;
+    constructor(args) {
+        this.#octokit = args.octokit;
+        this.#githubContext = args.githubContext;
+    }
+    async fetchFromGithub() {
+        const githubPrFiles = await this.#fetchByOctokit();
+        const prFiles = githubPrFiles.map((file) => {
+            return PullRequestFile.fromGithub(file);
+        });
+        return prFiles;
+    }
+    async #fetchByOctokit() {
+        const pullRequestNumber = PullRequestNumber.fromGithubContext(this.#githubContext);
+        const { repo: { owner, repo } } = this.#githubContext;
+        const githubPrFile = await this.#octokit.paginate(this.#octokit.rest.pulls.listFiles, {
+            owner,
+            repo,
+            pull_number: pullRequestNumber.pullNumber
+        });
+        return githubPrFile;
+    }
+}
+
+class GetPrCreator {
+    #octokit;
+    #targetUserId;
+    constructor(args) {
+        this.#octokit = args.octokit;
+        if (!args.targetUserId) {
+            throw new Error('Id need to be provided when initialize Pull Request');
+        }
+        if (!Number.isInteger(args.targetUserId)) {
+            throw new Error('Id need to be integer when initialize Pull Request');
+        }
+        if (args.targetUserId <= 0) {
+            throw new Error('Id need to be larger than 0 when initialize Pull Request');
+        }
+        this.#targetUserId = args.targetUserId;
+    }
+    async #fetchUserById() {
+        try {
+            const response = await this.#octokit.request('GET /user/{account_id}', {
+                account_id: this.#targetUserId,
+                headers: {
+                    'X-GitHub-Api-Version': '2022-11-28'
+                }
+            });
+            const githubUser = response.data;
+            return githubUser;
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error(`Failed to fetch user with ID ${this.#targetUserId}:`);
+            Logger.error(error);
+            throw error;
+        }
+    }
+    #createUserInstance(githubUser) {
+        return PublicUser.fromGithub(githubUser);
+    }
+    async fetchFromGithub() {
+        let githubUser;
+        try {
+            githubUser = await this.#fetchUserById();
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error(error);
+            throw new Error('Unable to fetch users from GitHub');
+        }
+        const users = this.#createUserInstance(githubUser);
+        return users;
+    }
+}
+
+class MainJobToFetchPullRequestInfo {
+    #octokit;
+    #githubContext;
+    constructor(args) {
+        this.#octokit = args.octokit;
+        this.#githubContext = args.githubContext;
+    }
+    #isPullRequest() {
+        return !!this.#githubContext.payload.pull_request;
+    }
+    async #fetchPullRequest() {
+        const getPullRequest = new GetPullRequest({
+            octokit: this.#octokit,
+            githubContext: this.#githubContext
+        });
+        let pullRequest;
+        try {
+            pullRequest = await getPullRequest.fetchFromGithub();
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error('Fetch one Pull Request in MainJobToFetchPullRequestInfo failed, reason:');
+            Logger.error(error);
+            throw error;
+        }
+        return pullRequest;
+    }
+    async #fetchPrCreator(targetUserId) {
+        const getPrCreator = new GetPrCreator({
+            octokit: this.#octokit,
+            targetUserId
+        });
+        let prCreator;
+        try {
+            prCreator = await getPrCreator.fetchFromGithub();
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error('Fetch Creator of Pull Request in MainJobToFetchPullRequestInfo failed, reason:');
+            Logger.error(error);
+            throw error;
+        }
+        return prCreator;
+    }
+    async #fetchRepository() {
+        const getRepository = new GetRepository({
+            octokit: this.#octokit,
+            githubContext: this.#githubContext
+        });
+        let repository;
+        try {
+            repository = await getRepository.fetchFromGithub();
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error('Fetch repository in MainJobToFetchPullRequestInfo failed, reason:');
+            Logger.error(error);
+            throw error;
+        }
+        return repository;
+    }
+    async #fetchContributors() {
+        const listContributor = new ListContributor({
+            octokit: this.#octokit,
+            githubContext: this.#githubContext
+        });
+        let contributors;
+        try {
+            contributors = await listContributor.fetchFromGithub();
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error('Fetch Contributors of Repository in MainJobToFetchPullRequestInfo failed, reason:');
+            Logger.error(error);
+            throw error;
+        }
+        return contributors;
+    }
+    async #fetchCommits() {
+        const listPrCommits = new ListPrCommit({
+            octokit: this.#octokit,
+            githubContext: this.#githubContext
+        });
+        let commits;
+        try {
+            commits = await listPrCommits.fetchFromGithub();
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error('Fetch commits of pull request in MainJobToFetchPullRequestInfo failed, reason:');
+            Logger.error(error);
+            throw error;
+        }
+        return commits;
+    }
+    async #fetchFileChange() {
+        const listPrFileChange = new ListPrFileChange({
+            octokit: this.#octokit,
+            githubContext: this.#githubContext
+        });
+        let filesChanges;
+        try {
+            filesChanges = await listPrFileChange.fetchFromGithub();
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error('Fetch Files Change of pull request in MainJobToFetchPullRequestInfo failed, reason:');
+            Logger.error(error);
+            throw error;
+        }
+        return filesChanges;
+    }
+    async #fetchWorkflowJobs() {
+        const listWorkflowJobs = new ListWorkflowJobs({
+            octokit: this.#octokit,
+            githubContext: this.#githubContext
+        });
+        let jobs;
+        try {
+            jobs = await listWorkflowJobs.fetchFromGithub();
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error('Fetch Jobs in MainJobToFetchPullRequestInfo failed, reason:');
+            Logger.error(error);
+            throw error;
+        }
+        return jobs;
+    }
+    async #createCommit(args) {
+        const { json } = args;
+        const githubCommitter = new GithubCommitter({
+            octokit: this.#octokit,
+            githubContext: this.#githubContext
+        });
+        return githubCommitter.createComment({
+            body: json,
+            postToPullRequest: true
+        });
+    }
+    async run() {
+        if (this.#isPullRequest()) {
+            try {
+                const pullRequest = await this.#fetchPullRequest();
+                const pullRequestCreator = await this.#fetchPrCreator(pullRequest.user.id);
+                const commits = await this.#fetchCommits();
+                const contributors = await this.#fetchContributors();
+                const repository = await this.#fetchRepository();
+                const filesChanges = await this.#fetchFileChange();
+                const jobs = await this.#fetchWorkflowJobs();
+                const json = {
+                    pullRequest: pullRequest.toJson(),
+                    pullRequestCreator: pullRequestCreator.toJson(),
+                    commits: commits.map((commit) => commit.toJson()),
+                    contributors: contributors.map((contributor) => contributor.toJson()),
+                    repository: repository.toJson(),
+                    filesChanges: filesChanges.map((fileChange) => fileChange.toJson()),
+                    jobs: jobs.map((job) => job.toJson())
+                };
+                const jsonString = '```json\n' + JSON.stringify(json, null, 2) + '\n```';
+                await this.#createCommit({
+                    json: jsonString
+                });
+            }
+            catch (_error) {
+                const error = _error;
+                Logger.error('Fail tp run MainJobToFetchPullRequestInfo failed, reason:');
+                Logger.error(error);
+                throw error;
+            }
+            Logger.info('[Step]: Fetch Pull Request Info Generate completed');
+        }
+        else {
+            Logger.info('[Step]: Fetch Pull Request Info skipped since the commit is not pull request');
+        }
+    }
+}
+
 /**
  * Source: [catchpoint/workflow-telemetry-action](https://github.com/catchpoint/workflow-telemetry-action/tree/master)
  * Copyright (c) 2025 Catchpoint Systems
@@ -882,9 +1860,14 @@ async function run() {
             octokit,
             githubContext
         });
+        const stepFetchPullRequestInfo = new MainJobToFetchPullRequestInfo({
+            octokit,
+            githubContext
+        });
         // Info: (20250122 - Murky) Delay to that ActionRelay completed
         await setTimeout(5000);
         await stepGanttChartGenerate.run();
+        await stepFetchPullRequestInfo.run();
         // Set outputs for other workflow steps to use
         coreExports.setOutput('time', new Date().toTimeString());
     }

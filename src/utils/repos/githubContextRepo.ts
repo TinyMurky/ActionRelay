@@ -1,7 +1,7 @@
 /**
  * Store name of repo (or issue) from github context
  */
-export default class Repo {
+export default class GithubContextRepo {
   readonly name: string
 
   constructor(
@@ -12,7 +12,9 @@ export default class Repo {
     const { name } = args
 
     if (!name) {
-      throw new Error('Repo should be initialized by name at least 1 character')
+      throw new Error(
+        'GithubContextRepo should be initialized by name at least 1 character'
+      )
     }
 
     this.name = name

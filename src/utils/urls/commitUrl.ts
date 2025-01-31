@@ -1,5 +1,5 @@
-import Owner from '@/utils/repos/owner.js'
-import Repo from '@/utils/repos/repo.js'
+import GithubContextOwner from '@/utils/repos/githubContextOwner.js'
+import GithubContextRepo from '@/utils/repos/githubContextRepo.js'
 import GithubUrl from '@/utils/urls/githubUrl.js'
 
 export default class CommitUrl extends GithubUrl {
@@ -8,8 +8,8 @@ export default class CommitUrl extends GithubUrl {
   constructor(
     args: Readonly<{
       commitId: string
-      owner: Owner
-      repo: Repo
+      owner: GithubContextOwner
+      repo: GithubContextRepo
     }>
   ) {
     const { commitId, owner, repo } = args
@@ -36,10 +36,10 @@ export default class CommitUrl extends GithubUrl {
     }>
   ) {
     const { commitId, owner, repo } = args
-    const newOwner = new Owner({
+    const newOwner = new GithubContextOwner({
       name: owner
     })
-    const newRepo = new Repo({
+    const newRepo = new GithubContextRepo({
       name: repo
     })
 

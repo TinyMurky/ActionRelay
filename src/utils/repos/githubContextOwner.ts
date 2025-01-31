@@ -1,7 +1,7 @@
 /**
  * Store owner of repo (or issue) from github context
  */
-export default class Owner {
+export default class GithubContextOwner {
   readonly name: string
 
   constructor(
@@ -13,7 +13,7 @@ export default class Owner {
 
     if (!name) {
       throw new Error(
-        'Owner should be initialized by name at least 1 character'
+        'GithubContextOwner should be initialized by name at least 1 character'
       )
     }
 

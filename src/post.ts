@@ -31,6 +31,7 @@ import MainJobsToGanttRunner from '@/steps/jobSummary/mainJobsToGanttRunner.js'
 import CoreInput from '@/utils/coreInput.js'
 
 import { setTimeout } from 'timers/promises'
+import MainJobToFetchPullRequestInfo from '@/steps/fetchPullRequest/mainJobToFetchPullRequestInfo.js'
 
 /**
  * The main function for the action.
@@ -55,10 +56,16 @@ async function run(): Promise<void> {
       githubContext
     })
 
+    const stepFetchPullRequestInfo = new MainJobToFetchPullRequestInfo({
+      octokit,
+      githubContext
+    })
+
     // Info: (20250122 - Murky) Delay to that ActionRelay completed
     await setTimeout(5000)
 
     await stepGanttChartGenerate.run()
+    await stepFetchPullRequestInfo.run()
 
     // Set outputs for other workflow steps to use
     core.setOutput('time', new Date().toTimeString())

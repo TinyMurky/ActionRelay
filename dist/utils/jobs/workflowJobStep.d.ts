@@ -53,4 +53,12 @@ export default class WorkflowJobStep {
      * Get gantt tag base on conclusion
      */
     get ganttTag(): import("../../types/ganttChart.js").GanttChartTaskTag;
+    toJson(): {
+        name: string;
+        status: string;
+        conclusion: string;
+        number: number;
+        startedAt: number | null;
+        completedAt: number | null;
+    };
 }

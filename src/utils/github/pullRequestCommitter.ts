@@ -1,12 +1,12 @@
 import { GitHubInstance } from '@/types/github.js'
 import { Context } from '@actions/github/lib/context.js'
-import Owner from '@/utils/repos/owner.js'
-import Repo from '@/utils/repos/repo.js'
+import GithubContextOwner from '@/utils/repos/githubContextOwner.js'
+import GithubContextRepo from '@/utils/repos/githubContextRepo.js'
 
 export default class PullRequestCommitter {
   private readonly octokit: GitHubInstance
-  private readonly owner: Owner
-  private readonly repo: Repo
+  private readonly owner: GithubContextOwner
+  private readonly repo: GithubContextRepo
   private readonly pullRequestId: number
 
   constructor(args: Readonly<{ octokit: GitHubInstance; context: Context }>) {
@@ -17,8 +17,8 @@ export default class PullRequestCommitter {
     }
 
     this.octokit = octokit
-    this.owner = new Owner({ name: context.repo.owner })
-    this.repo = new Repo({ name: context.repo.repo })
+    this.owner = new GithubContextOwner({ name: context.repo.owner })
+    this.repo = new GithubContextRepo({ name: context.repo.repo })
     this.pullRequestId = context.payload.pull_request.number
   }
 
