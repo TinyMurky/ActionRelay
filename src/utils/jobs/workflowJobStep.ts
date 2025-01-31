@@ -94,4 +94,19 @@ export default class WorkflowJobStep {
   public get ganttTag() {
     return this.conclusion.ganttTag
   }
+
+  public toJson() {
+    const { name, status, conclusion, number, startedAt, completedAt } = this
+
+    const json = {
+      name: name,
+      status: status.status.toString(),
+      conclusion: conclusion.conclusion.toString(),
+      number: number,
+      startedAt: startedAt ? startedAt.timestamp : null,
+      completedAt: completedAt ? completedAt.timestamp : null
+    }
+
+    return json
+  }
 }

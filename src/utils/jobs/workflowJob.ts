@@ -282,4 +282,56 @@ export default class WorkflowJob {
       headBranch: this.headBranch
     })
   }
+
+  public toJson() {
+    const {
+      id,
+      run,
+      nodeId,
+      headSha,
+      url,
+      htmlUrl,
+      status,
+      conclusion,
+      createdAt,
+      startedAt,
+      completedAt,
+      name,
+      steps,
+      checkRunUrl,
+      labels,
+      runnerId,
+      runnerName,
+      runnerGroupId,
+      runnerGroupName,
+      workflowName,
+      headBranch
+    } = this
+
+    const json = {
+      id: id,
+      run: run.toJson(),
+      nodeId: nodeId,
+      headSha: headSha,
+      url: url,
+      htmlUrl: htmlUrl,
+      status: status.status.toString(),
+      conclusion: conclusion.conclusion.toString(),
+      createdAt: createdAt ? createdAt.timestamp : null,
+      startedAt: startedAt ? startedAt.timestamp : null,
+      completedAt: completedAt ? completedAt.timestamp : null,
+      name: name,
+      steps: steps.map((step) => step.toJson()),
+      checkRunUrl: checkRunUrl,
+      labels: labels,
+      runnerId: runnerId,
+      runnerName: runnerName,
+      runnerGroupId: runnerGroupId,
+      runnerGroupName: runnerGroupName,
+      workflowName: workflowName,
+      headBranch: headBranch
+    }
+
+    return json
+  }
 }

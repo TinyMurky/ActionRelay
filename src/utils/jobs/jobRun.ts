@@ -47,4 +47,16 @@ export default class JobRun {
 
     this.attempt = attempt || 0
   }
+
+  public toJson() {
+    const { id, url, attempt } = this
+
+    const json = {
+      id: id,
+      url: url,
+      attempt: attempt
+    }
+
+    return json
+  }
 }

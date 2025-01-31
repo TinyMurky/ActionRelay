@@ -1,14 +1,14 @@
-import Owner from '@/utils/repos/owner.js'
-import Repo from '@/utils/repos/repo.js'
+import GithubContextOwner from '@/utils/repos/githubContextOwner.js'
+import GithubContextRepo from '@/utils/repos/githubContextRepo.js'
 
 export default class GithubUrl {
-  readonly owner: Owner
-  readonly repo: Repo
+  readonly owner: GithubContextOwner
+  readonly repo: GithubContextRepo
 
   constructor(
     args: Readonly<{
-      owner: Owner
-      repo: Repo
+      owner: GithubContextOwner
+      repo: GithubContextRepo
     }>
   ) {
     const { owner, repo } = args
@@ -24,10 +24,10 @@ export default class GithubUrl {
     }>
   ) {
     const { owner, repo } = args
-    const newOwner = new Owner({
+    const newOwner = new GithubContextOwner({
       name: owner
     })
-    const newRepo = new Repo({
+    const newRepo = new GithubContextRepo({
       name: repo
     })
 

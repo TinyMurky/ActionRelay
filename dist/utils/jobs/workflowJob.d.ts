@@ -108,4 +108,38 @@ export default class WorkflowJob {
     isCompleted(): boolean;
     isSuccess(): boolean;
     filterStepWithBothStartAtAndCompleteAt(): WorkflowJob;
+    toJson(): {
+        id: number;
+        run: {
+            id: number;
+            url: string;
+            attempt: number;
+        };
+        nodeId: string;
+        headSha: string;
+        url: string;
+        htmlUrl: string;
+        status: string;
+        conclusion: string;
+        createdAt: number | null;
+        startedAt: number | null;
+        completedAt: number | null;
+        name: string;
+        steps: {
+            name: string;
+            status: string;
+            conclusion: string;
+            number: number;
+            startedAt: number | null;
+            completedAt: number | null;
+        }[];
+        checkRunUrl: string;
+        labels: string[];
+        runnerId: number;
+        runnerName: string;
+        runnerGroupId: number;
+        runnerGroupName: string;
+        workflowName: string;
+        headBranch: string;
+    };
 }

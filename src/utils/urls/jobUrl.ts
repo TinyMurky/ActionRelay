@@ -1,5 +1,5 @@
-import Owner from '@/utils/repos/owner.js'
-import Repo from '@/utils/repos/repo.js'
+import GithubContextOwner from '@/utils/repos/githubContextOwner.js'
+import GithubContextRepo from '@/utils/repos/githubContextRepo.js'
 import GithubUrl from '@/utils/urls/githubUrl.js'
 
 export default class JobUrl extends GithubUrl {
@@ -8,8 +8,8 @@ export default class JobUrl extends GithubUrl {
   constructor(
     args: Readonly<{
       jobId: number
-      owner: Owner
-      repo: Repo
+      owner: GithubContextOwner
+      repo: GithubContextRepo
     }>
   ) {
     const { jobId, owner, repo } = args
@@ -36,10 +36,10 @@ export default class JobUrl extends GithubUrl {
     }>
   ) {
     const { jobId, owner, repo } = args
-    const newOwner = new Owner({
+    const newOwner = new GithubContextOwner({
       name: owner
     })
-    const newRepo = new Repo({
+    const newRepo = new GithubContextRepo({
       name: repo
     })
 
