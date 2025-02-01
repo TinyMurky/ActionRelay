@@ -85,10 +85,11 @@ jobs:
         id: test-action
         uses: ./
         with:
-          Name_OF_THIS_JOB: GitHub Actions Test
+          NAME_OF_THIS_JOB: GitHub Actions Test
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TIMEOUT_AFTER_MINUTE: '15'
           INTERVAL_TO_CHECK_JOBS: '2500'
+          RELAY_SERVER_URL: 'localhost'
 
       - name: Print Output
         id: output

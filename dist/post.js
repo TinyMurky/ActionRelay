@@ -1,4 +1,4 @@
-import { W as WorkflowJob, G as GanttChartTaskTag, g as githubContext, L as Logger, D as DateTime, a as CreateTime, C as CoreInput, O as OctokitManager, c as coreExports } from './coreInput-CCBlV6Fl.js';
+import { W as WorkflowJob, G as GanttChartTaskTag, g as githubContext, L as Logger, D as DateTime, a as CreateTime, r as requireLib, C as CoreInput, O as OctokitManager, c as coreExports } from './coreInput-AJWe-GQX.js';
 import { setTimeout } from 'timers/promises';
 import 'fs';
 import 'os';
@@ -1645,9 +1645,13 @@ class GetPrCreator {
 class MainJobToFetchPullRequestInfo {
     #octokit;
     #githubContext;
+    #httpClient;
+    #coreInput;
     constructor(args) {
         this.#octokit = args.octokit;
         this.#githubContext = args.githubContext;
+        this.#httpClient = args.httpClient;
+        this.#coreInput = args.coreInput;
     }
     #isPullRequest() {
         return !!this.#githubContext.payload.pull_request;
@@ -1782,8 +1786,27 @@ class MainJobToFetchPullRequestInfo {
             postToPullRequest: true
         });
     }
+    async #postJson(json) {
+        const relayServerUrl = this.#coreInput.relayServerUrl;
+        let response;
+        try {
+            response = await this.#httpClient.postJson(relayServerUrl, json);
+        }
+        catch (_error) {
+            const error = _error;
+            Logger.error('Post Json Failed in MainJobToFetchPullRequestInfo failed, reason:');
+            Logger.error(error);
+            throw error;
+        }
+        if (response.statusCode <= 299 && response.statusCode >= 200) {
+            const errorMessage = `Post Json to Relay Server Url fail, status code: ${response.statusCode}, reason: ${response.result}`;
+            Logger.error(errorMessage);
+            throw new Error(errorMessage);
+        }
+    }
     async run() {
         if (this.#isPullRequest()) {
+            let json;
             try {
                 const pullRequest = await this.#fetchPullRequest();
                 const pullRequestCreator = await this.#fetchPrCreator(pullRequest.user.id);
@@ -1792,7 +1815,7 @@ class MainJobToFetchPullRequestInfo {
                 const repository = await this.#fetchRepository();
                 const filesChanges = await this.#fetchFileChange();
                 const jobs = await this.#fetchWorkflowJobs();
-                const json = {
+                json = {
                     pullRequest: pullRequest.toJson(),
                     pullRequestCreator: pullRequestCreator.toJson(),
                     commits: commits.map((commit) => commit.toJson()),
@@ -1802,6 +1825,7 @@ class MainJobToFetchPullRequestInfo {
                     jobs: jobs.map((job) => job.toJson())
                 };
                 const jsonString = '```json\n' + JSON.stringify(json, null, 2) + '\n```';
+                Logger.debug(jsonString);
                 await this.#createCommit({
                     json: jsonString
                 });
@@ -1812,11 +1836,37 @@ class MainJobToFetchPullRequestInfo {
                 Logger.error(error);
                 throw error;
             }
+            try {
+                await this.#postJson(JSON);
+            }
+            catch (_error) {
+                const error = _error;
+                Logger.error('Post Json to Relay Server url fail in MainJobsToFetchPullRequestInfo, reason:');
+                Logger.error(error);
+                Logger.error('Skip Post Json to Relay Server step');
+            }
             Logger.info('[Step]: Fetch Pull Request Info Generate completed');
         }
         else {
             Logger.info('[Step]: Fetch Pull Request Info skipped since the commit is not pull request');
         }
+    }
+}
+
+var libExports = requireLib();
+
+class HttpClientManager {
+    static #USER_AGENT = `ActionRelay`;
+    // static readonly #USER_AGENT = `ActionRelay/0.0.1`
+    static httpClient = null;
+    /**
+     * Get HttpClient with [USER_AGENT](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/User-Agent) header
+     */
+    static getInstance() {
+        if (!this.httpClient) {
+            this.httpClient = new libExports.HttpClient(HttpClientManager.#USER_AGENT);
+        }
+        return this.httpClient;
     }
 }
 
@@ -1856,13 +1906,16 @@ async function run() {
         Logger.debug(new Date().toTimeString());
         const coreInput = CoreInput.getInstance();
         const octokit = OctokitManager.getInstance(coreInput.githubToken);
+        const httpClient = HttpClientManager.getInstance();
         const stepGanttChartGenerate = new MainJobsToGanttRunner({
             octokit,
             githubContext
         });
         const stepFetchPullRequestInfo = new MainJobToFetchPullRequestInfo({
             octokit,
-            githubContext
+            githubContext,
+            httpClient,
+            coreInput
         });
         // Info: (20250122 - Murky) Delay to that ActionRelay completed
         await setTimeout(5000);
@@ -1878,4 +1931,6 @@ async function run() {
     }
 }
 run();
+
+export { run };
 //# sourceMappingURL=post.js.map

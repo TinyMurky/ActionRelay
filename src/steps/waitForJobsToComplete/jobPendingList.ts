@@ -38,7 +38,7 @@ export default class JobPendingList {
     const { jobs, coreInput } = args
 
     const filteredJobs = jobs.filter(
-      (job) => !job.name.includes(coreInput.NAME_OF_THIS_JOB)
+      (job) => !job.name.includes(coreInput.nameOfThisJob)
     )
 
     // not filter out current job

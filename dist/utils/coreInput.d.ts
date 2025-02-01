@@ -11,7 +11,8 @@ export default class CoreInput {
      * How long of waiting to check if job complete in millisecond
      */
     readonly intervalToCheckJobs: number;
-    readonly NAME_OF_THIS_JOB: string;
+    readonly nameOfThisJob: string;
+    readonly relayServerUrl: string;
     private constructor();
     static getInstance(): CoreInput;
 }

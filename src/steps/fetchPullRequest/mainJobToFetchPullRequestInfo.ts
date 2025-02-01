@@ -18,14 +18,26 @@ import ListPrFileChange from '@/steps/fetchPullRequest/listPrFileChange.js'
 import GetPrCreator from '@/steps/fetchPullRequest/getPrCreator.js'
 
 import ListWorkflowJobs from '@/steps/jobSummary/listWorkflowJobs.js'
+import * as httpm from '@actions/http-client'
+import CoreInput from '@/utils/coreInput.js'
+import { TypedResponse } from '@actions/http-client/lib/interfaces.js'
 
 export default class MainJobToFetchPullRequestInfo {
   readonly #octokit: GitHubInstance
   readonly #githubContext: Context
+  readonly #httpClient: httpm.HttpClient
+  readonly #coreInput: CoreInput
 
-  constructor(args: { octokit: GitHubInstance; githubContext: Context }) {
+  constructor(args: {
+    octokit: GitHubInstance
+    githubContext: Context
+    httpClient: httpm.HttpClient
+    coreInput: CoreInput
+  }) {
     this.#octokit = args.octokit
     this.#githubContext = args.githubContext
+    this.#httpClient = args.httpClient
+    this.#coreInput = args.coreInput
   }
 
   #isPullRequest() {
@@ -199,8 +211,31 @@ export default class MainJobToFetchPullRequestInfo {
     })
   }
 
+  async #postJson(json: object) {
+    const relayServerUrl = this.#coreInput.relayServerUrl
+    let response: TypedResponse<unknown>
+
+    try {
+      response = await this.#httpClient.postJson(relayServerUrl, json)
+    } catch (_error) {
+      const error = _error as Error
+      Logger.error(
+        'Post Json Failed in MainJobToFetchPullRequestInfo failed, reason:'
+      )
+      Logger.error(error)
+      throw error
+    }
+
+    if (response.statusCode <= 299 && response.statusCode >= 200) {
+      const errorMessage = `Post Json to Relay Server Url fail, status code: ${response.statusCode}, reason: ${response.result}`
+      Logger.error(errorMessage)
+      throw new Error(errorMessage)
+    }
+  }
+
   public async run() {
     if (this.#isPullRequest()) {
+      let json: object
       try {
         const pullRequest = await this.#fetchPullRequest()
         const pullRequestCreator = await this.#fetchPrCreator(
@@ -212,7 +247,7 @@ export default class MainJobToFetchPullRequestInfo {
         const filesChanges = await this.#fetchFileChange()
         const jobs = await this.#fetchWorkflowJobs()
 
-        const json = {
+        json = {
           pullRequest: pullRequest.toJson(),
           pullRequestCreator: pullRequestCreator.toJson(),
           commits: commits.map((commit) => commit.toJson()),
@@ -224,6 +259,8 @@ export default class MainJobToFetchPullRequestInfo {
 
         const jsonString = '```json\n' + JSON.stringify(json, null, 2) + '\n```'
 
+        Logger.debug(jsonString)
+
         await this.#createCommit({
           json: jsonString
         })
@@ -234,6 +271,17 @@ export default class MainJobToFetchPullRequestInfo {
         )
         Logger.error(error)
         throw error
+      }
+
+      try {
+        await this.#postJson(JSON)
+      } catch (_error) {
+        const error = _error as Error
+        Logger.error(
+          'Post Json to Relay Server url fail in MainJobsToFetchPullRequestInfo, reason:'
+        )
+        Logger.error(error)
+        Logger.error('Skip Post Json to Relay Server step')
       }
 
       Logger.info('[Step]: Fetch Pull Request Info Generate completed')

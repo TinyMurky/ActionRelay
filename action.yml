@@ -17,6 +17,10 @@ inputs:
   GITHUB_TOKEN:
     description: 'GitHub API Access Token'
     required: true
+  RELAY_SERVER_URL:
+    description: 'The target url that pull request information will be post to'
+    required: true
+    default: 'localhost' # need to be removed
   TIMEOUT_AFTER_MINUTE:
     description:
       'timeout waiting progress after timeoutAfterMinute maximum is 15'

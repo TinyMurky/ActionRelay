@@ -1,19 +1,19 @@
 export default class FileSystem {
     private static readonly CONFIG;
     static get rootFolder(): string;
-    static get outputFolder(): string;
+    static get downloadFolder(): string;
     /**
      * Make sure folder path exist, create new folder if not exist
      * @param folderPath the folder need to be check if existed
      */
     static ensureFolderExists(folderPath: Readonly<string>): void;
-    static initOutputFolder(): void;
+    static initDownloadFolder(): void;
     /**
-     * join file name after outputFolder
-     * @param fileName the fileName that will be joint after output folder
-     * @returns full outputFolder plus fileName
+     * join file name after downloadFolder
+     * @param fileName the fileName that will be joint after download folder
+     * @returns full downloadFolder plus fileName
      */
-    static getOutputFilePath(fileName: Readonly<string>): string;
+    static getDownloadFilePath(fileName: Readonly<string>): string;
     /**
      * create or used existed
      * @param folderName custom folder inside root
@@ -25,9 +25,9 @@ export default class FileSystem {
      */
     static writeFileSync(filePath: Readonly<string>, data: Readonly<string>): void;
     /**
-     * Write to output folder and te fileName is [filename]
-     * @param filePath only fileName, it wil be join with output path
+     * Write to download folder and te fileName is [filename]
+     * @param filePath only fileName, it wil be join with download path
      * @param data string that will be store in the [filePath]
      */
-    static writeToOutputFolder(fileName: Readonly<string>, data: Readonly<string>): string;
+    static writeToDownloadFolder(fileName: Readonly<string>, data: Readonly<string>): string;
 }

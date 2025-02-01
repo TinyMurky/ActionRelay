@@ -17,7 +17,9 @@ export default class CoreInput {
    */
   readonly intervalToCheckJobs: number
 
-  readonly NAME_OF_THIS_JOB: string
+  readonly nameOfThisJob: string
+
+  readonly relayServerUrl: string
 
   private constructor() {
     this.githubToken = core.getInput('GITHUB_TOKEN')
@@ -59,7 +61,16 @@ export default class CoreInput {
       this.#throwErrorAndSetFailed(errorMessage)
     }
 
-    this.NAME_OF_THIS_JOB = nameOfThisJob
+    this.nameOfThisJob = nameOfThisJob
+
+    const relayServerUrl = core.getInput('RELAY_SERVER_URL')
+
+    if (!relayServerUrl) {
+      const errorMessage = 'RELAY_SERVER_URL need to be provided'
+      this.#throwErrorAndSetFailed(errorMessage)
+    }
+
+    this.relayServerUrl = relayServerUrl
   }
 
   static getInstance() {
