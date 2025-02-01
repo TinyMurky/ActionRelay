@@ -52,6 +52,13 @@ If the value exceeds 15 minutes, it will be constrained to 15 minutes.
 
 ---
 
+### `RELAY_SERVER_URL`
+
+ActionRelay will gather pull request information and post it to the [middle
+server](Not implement), Information than will pass to Flutter App
+
+**Required** Yes
+
 ### `INTERVAL_TO_CHECK_JOBS`
 
 ActionRelay will periodically fetch the GitHub API to check the status of other

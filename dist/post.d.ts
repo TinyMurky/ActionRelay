@@ -20,4 +20,9 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-export {};
+/**
+ * The main function for the action.
+ *
+ * The main function for the action.
+ */
+export declare function run(): Promise<void>;

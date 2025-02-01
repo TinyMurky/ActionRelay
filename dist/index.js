@@ -1,4 +1,4 @@
-import { L as Logger, W as WorkflowJob, c as coreExports, C as CoreInput, O as OctokitManager, g as githubContext } from './coreInput-CCBlV6Fl.js';
+import { L as Logger, W as WorkflowJob, c as coreExports, C as CoreInput, O as OctokitManager, g as githubContext } from './coreInput-AJWe-GQX.js';
 import { setTimeout } from 'timers/promises';
 import 'fs';
 import 'os';
@@ -114,7 +114,7 @@ class JobPendingList {
     jobs;
     constructor(args) {
         const { jobs, coreInput } = args;
-        const filteredJobs = jobs.filter((job) => !job.name.includes(coreInput.NAME_OF_THIS_JOB));
+        const filteredJobs = jobs.filter((job) => !job.name.includes(coreInput.nameOfThisJob));
         // not filter out current job
         if (filteredJobs.length === jobs.length) {
             const errorMessage = 'NAME_OF_THIS_JOB must match exactly to the name of the job that runs Action Relay. The Job Name you set is not found in the GitHub API response.';

@@ -32,13 +32,14 @@ import CoreInput from '@/utils/coreInput.js'
 
 import { setTimeout } from 'timers/promises'
 import MainJobToFetchPullRequestInfo from '@/steps/fetchPullRequest/mainJobToFetchPullRequestInfo.js'
+import HttpClientManager from '@/utils/httpClientManager.js'
 
 /**
  * The main function for the action.
  *
  * The main function for the action.
  */
-async function run(): Promise<void> {
+export async function run(): Promise<void> {
   try {
     // const ms: string = core.getInput('milliseconds')
 
@@ -50,6 +51,7 @@ async function run(): Promise<void> {
 
     const coreInput = CoreInput.getInstance()
     const octokit = OctokitManager.getInstance(coreInput.githubToken)
+    const httpClient = HttpClientManager.getInstance()
 
     const stepGanttChartGenerate = new MainJobsToGanttRunner({
       octokit,
@@ -58,7 +60,9 @@ async function run(): Promise<void> {
 
     const stepFetchPullRequestInfo = new MainJobToFetchPullRequestInfo({
       octokit,
-      githubContext
+      githubContext,
+      httpClient,
+      coreInput
     })
 
     // Info: (20250122 - Murky) Delay to that ActionRelay completed
